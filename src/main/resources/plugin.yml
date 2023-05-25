@@ -1,0 +1,7 @@
+name: LevityCosmetics
+version: '${project.version}'
+main: com.reflexian.levitycosmetics.LevityCosmetics
+api-version: 1.19
+softdepend: [Vault]
+authors: [Raymond, Whale]
+website: reflexian.com
