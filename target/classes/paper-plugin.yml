@@ -1,0 +1,11 @@
+name: LevityCosmetics
+version: '1.0-SNAPSHOT'
+main: com.reflexian.levitycosmetics.LevityCosmetics
+api-version: 1.19
+dependencies:
+  - name: Vault
+    required: false
+    bootstrap: false
+authors: [Raymond, Whale]
+website: reflexian.com
+loader: com.reflexian.levitycosmetics.CosmeticsPluginLoader
