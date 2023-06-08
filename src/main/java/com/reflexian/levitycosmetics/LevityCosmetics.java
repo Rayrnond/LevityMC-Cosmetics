@@ -1,12 +1,10 @@
 package com.reflexian.levitycosmetics;
 
+import com.reflexian.levitycosmetics.data.Database;
 import com.reflexian.rapi.RAPI;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.units.qual.C;
-import org.hibernate.Hibernate;
-
-import java.util.*;
 
 public final class LevityCosmetics extends JavaPlugin {
 
@@ -19,11 +17,12 @@ public final class LevityCosmetics extends JavaPlugin {
 
         saveDefaultConfig();
 
-        Hibernate.map();
         RAPI rapi = new RAPI(this);
         rapi.init();
 
         getLogger().info("ez");
+        // async
+        Bukkit.getScheduler().runTaskAsynchronously(this, Database.shared::initializeDataSource);
 
 
     }

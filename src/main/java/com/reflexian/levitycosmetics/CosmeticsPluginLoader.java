@@ -16,14 +16,14 @@ public class CosmeticsPluginLoader implements PluginLoader {
         rapi.addRepository(new RemoteRepository.Builder("jitpack", "default", "https://jitpack.io").build());
         rapi.addDependency(new Dependency(new DefaultArtifact("com.github.Rayrnond:RAPI:b85ffda6b6"), null));
 
-        MavenLibraryResolver hibernate = new MavenLibraryResolver();
-        hibernate.addDependency(new Dependency(new DefaultArtifact("org.hibernate:hibernate-core:6.2.3.Final"), null));
+//        MavenLibraryResolver hibernate = new MavenLibraryResolver();
+//        hibernate.addDependency(new  Dependency(new DefaultArtifact("org.hibernate:hibernate-core:6.2.3.Final"), null));
 
         MavenLibraryResolver mysql = new MavenLibraryResolver();
         mysql.addDependency(new Dependency(new DefaultArtifact("mysql:mysql-connector-java:8.0.28"), null));
 
         pluginClasspathBuilder.addLibrary(rapi);
-        pluginClasspathBuilder.addLibrary(hibernate);
+//        pluginClasspathBuilder.addLibrary(hibernate);
         pluginClasspathBuilder.addLibrary(mysql);
     }
 
