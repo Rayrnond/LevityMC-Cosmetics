@@ -14,17 +14,19 @@ import java.util.UUID;
 public class UserData implements Serializable {
     private UUID uuid;
     private List<String> cosmeticIds;
-    private Long timestamp;
+    private boolean tradeBanned;
+    private long timestamp;
 
 
 
     public static UserData fromResultSet(ResultSet resultSet) throws SQLException {
         UUID userId = UUID.fromString(resultSet.getString("user_id"));
         List<String> cosmeticIds = new ArrayList<>();
-        cosmeticIds.add(resultSet.getString("cosmetic_id"));
-        Long timestamp = resultSet.getLong("timestamp");
+        cosmeticIds.add(resultSet.getString("cosmetic_ids"));
+        long timestamp = resultSet.getLong("timestamp");
+        boolean tradeBanned = resultSet.getBoolean("trade_banned");
 
-        return new UserData(userId, cosmeticIds, timestamp);
+        return new UserData(userId, cosmeticIds, tradeBanned, timestamp);
     }
 }
 

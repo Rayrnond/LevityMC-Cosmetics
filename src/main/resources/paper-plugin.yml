@@ -3,9 +3,14 @@ version: '${project.version}'
 main: com.reflexian.levitycosmetics.LevityCosmetics
 api-version: 1.19
 dependencies:
-  - name: Vault
+  - name: PlaceholderAPI
+    required: true
+    bootstrap: false
+  - name: ItemsAdder
     required: false
     bootstrap: false
 authors: [Raymond, Whale]
 website: reflexian.com
 loader: com.reflexian.levitycosmetics.CosmeticsPluginLoader
+
+# %abysseconomy_<currency>_raw% - returns the raw balance of the player
