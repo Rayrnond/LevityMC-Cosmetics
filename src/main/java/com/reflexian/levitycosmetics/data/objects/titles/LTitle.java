@@ -1,4 +1,4 @@
-package com.reflexian.levitycosmetics.data.objects.chatcolors;
+package com.reflexian.levitycosmetics.data.objects.titles;
 
 import com.reflexian.levitycosmetics.data.objects.cosmetic.Cosmetic;
 import lombok.*;
@@ -7,16 +7,16 @@ import org.bukkit.inventory.ItemStack;
 import java.io.Serializable;
 
 @Builder@Getter@Setter@AllArgsConstructor@NoArgsConstructor
-public class LChatColor extends Cosmetic implements Serializable {
+public class LTitle extends Cosmetic implements Serializable {
 
     private String id;
     private String name;
-    private String color;
+    private String tag;
     private String permission;
     private ItemStack itemStack;
 
     @Override
     public String getUniqueId() {
-        return "lchatcolor_"+getId();
+        return "ltitle_"+getId();
     }
 }

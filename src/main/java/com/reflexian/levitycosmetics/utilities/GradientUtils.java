@@ -1,8 +1,6 @@
 package com.reflexian.levitycosmetics.utilities;
 
-import com.reflexian.levitycosmetics.data.inventories.ChatColorInventory;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

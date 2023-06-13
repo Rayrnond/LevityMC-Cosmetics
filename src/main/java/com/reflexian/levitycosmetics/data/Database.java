@@ -35,7 +35,7 @@ public class Database {
 
             dataSource = mysqlDataSource;
             logger.info("Data source initialized successfully!");
-            getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS userdata (user_id VARCHAR(36) NOT NULL, trade_banned BOOL, cosmetic_ids TEXT, timestamp BIGINT, PRIMARY KEY (user_id));").execute();
+            getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS userdata (user_id VARCHAR(36) NOT NULL, trade_banned BOOL, cosmetic_ids TEXT, selected_cosmetic_ids TEXT, timestamp BIGINT, PRIMARY KEY (user_id));").execute();
             logger.info("Completed data source clean up! Ready to proceed.");
         }catch (Exception e) {
             e.printStackTrace();

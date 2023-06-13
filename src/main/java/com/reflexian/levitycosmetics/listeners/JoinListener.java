@@ -13,7 +13,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import pl.mikigal.config.ConfigAPI;
+import pl.mikigal.config.style.CommentStyle;
+import pl.mikigal.config.style.NameStyle;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,25 +28,28 @@ public class JoinListener implements Listener {
     public void onJoin(AsyncPlayerPreLoginEvent event) {
         UserDataService.shared.retrieveUserFromUUID(event.getUniqueId(),e->{
             if (e == null ) {
-                Bukkit.broadcastMessage("Null player");
-                UserData userData = new UserData(event.getUniqueId(), new ArrayList<>(), false, System.currentTimeMillis());
+                UserData userData = new UserData(event.getUniqueId(), new ArrayList<>(), new ArrayList<>(), false, System.currentTimeMillis());
+                UserDataService.shared.cacheUser(userData);
                 UserDataService.shared.save(userData,success -> {
-                    if (success) {
-                        Bukkit.broadcastMessage("Saved player");
-                    } else {
-                        Bukkit.broadcastMessage("Failed to save player");
+                    if (!success) {
+                        LevityCosmetics.getInstance().getLogger().severe("[!] Failed to save player " + event.getName());
                     }
                 });
             } else {
-                Bukkit.broadcastMessage("Player exists, welcome §c" + e.isTradeBanned());
+                UserDataService.shared.cacheUser(e);
             }
         });
     }
 
     @EventHandler
-    public void onD(ItemsAdderLoadDataEvent event) {
-        LevityCosmetics.getInstance().setChatColorConfig(ConfigAPI.init(ChatColorConfig.class, new File(LevityCosmetics.getInstance().getDataFolder()+"/cosmetics/"), LevityCosmetics.getInstance()));
-        LevityCosmetics.getInstance().setGuiConfig(ConfigAPI.init(GUIConfig.class, LevityCosmetics.getInstance()));
+    public void onLeave(PlayerQuitEvent event) {
+        UserDataService.shared.revokeCache(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    public void onItmesLoad(ItemsAdderLoadDataEvent event) {
+        LevityCosmetics.getInstance().setChatColorConfig(ConfigAPI.init(ChatColorConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(LevityCosmetics.getInstance().getDataFolder()+"/cosmetics/"), LevityCosmetics.getInstance()));
+        LevityCosmetics.getInstance().setGuiConfig(ConfigAPI.init(GUIConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, LevityCosmetics.getInstance()));
     }
 
     @EventHandler

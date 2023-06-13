@@ -5,20 +5,23 @@ import com.reflexian.levitycosmetics.data.configs.ChatColorConfig;
 import com.reflexian.levitycosmetics.data.configs.DefaultConfig;
 import com.reflexian.levitycosmetics.data.configs.GUIConfig;
 import com.reflexian.levitycosmetics.data.configs.MessagesConfig;
-import com.reflexian.levitycosmetics.utilities.ConfigItemSerializer;
+import com.reflexian.levitycosmetics.data.objects.chatcolors.LChatColor;
+import com.reflexian.levitycosmetics.data.objects.titles.LTitle;
+import com.reflexian.levitycosmetics.utilities.LevityPlaceholders;
+import com.reflexian.levitycosmetics.utilities.serializers.ChatColorSerializer;
+import com.reflexian.levitycosmetics.utilities.serializers.ConfigItemSerializer;
+import com.reflexian.levitycosmetics.utilities.serializers.TitleSerializer;
 import com.reflexian.rapi.RAPI;
 import fr.minuskube.inv.InventoryManager;
 import lombok.Getter;
 import lombok.Setter;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import pl.mikigal.config.ConfigAPI;
 import pl.mikigal.config.style.CommentStyle;
 import pl.mikigal.config.style.NameStyle;
-
-import java.io.File;
 
 @Getter
 public final class LevityCosmetics extends JavaPlugin {
@@ -39,6 +42,8 @@ public final class LevityCosmetics extends JavaPlugin {
         instance = this;
 
         ConfigAPI.registerSerializer(ItemStack.class, new ConfigItemSerializer());
+        ConfigAPI.registerSerializer(LChatColor.class, new ChatColorSerializer());
+        ConfigAPI.registerSerializer(LTitle.class, new TitleSerializer());
         defaultConfig = ConfigAPI.init(DefaultConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, true, this);
         messagesConfig = ConfigAPI.init(MessagesConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, true, this);
 
@@ -47,6 +52,8 @@ public final class LevityCosmetics extends JavaPlugin {
 
         inventoryManager = new InventoryManager(this);
         inventoryManager.init();
+
+        new LevityPlaceholders().register();
 
         // async
         Bukkit.getScheduler().runTaskAsynchronously(this, Database.shared::initializeDataSource);

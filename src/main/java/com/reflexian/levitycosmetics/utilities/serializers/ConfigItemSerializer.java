@@ -1,11 +1,17 @@
-package com.reflexian.levitycosmetics.utilities;
+package com.reflexian.levitycosmetics.utilities.serializers;
 
+import com.reflexian.levitycosmetics.utilities.GradientUtils;
+import com.reflexian.levitycosmetics.utilities.ItemBuilder;
 import dev.lone.itemsadder.api.CustomStack;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import pl.mikigal.config.BukkitConfiguration;
 import pl.mikigal.config.serializer.Serializer;
+import pl.mikigal.config.serializer.Serializers;
+
+import java.util.List;
 
 public class ConfigItemSerializer extends Serializer<ItemStack> {
     @Override
@@ -14,7 +20,9 @@ public class ConfigItemSerializer extends Serializer<ItemStack> {
         bukkitConfiguration.set(s + ".data", itemStack.getData().getData());
         bukkitConfiguration.set(s + ".amount", itemStack.getAmount());
         bukkitConfiguration.set(s + ".displayname", itemStack.getItemMeta().getDisplayName());
-        bukkitConfiguration.set(s + ".lore", itemStack.getItemMeta().getLore());
+        if (itemStack.getItemMeta().getLore() != null) {
+            bukkitConfiguration.set(s + ".lore", itemStack.getItemMeta().getLore());
+        }
         bukkitConfiguration.set(s + ".glow", itemStack.getEnchantments().size()!=0);
         bukkitConfiguration.set(s + ".itemsadderID", "");
     }
@@ -43,9 +51,12 @@ public class ConfigItemSerializer extends Serializer<ItemStack> {
         if (bukkitConfiguration.contains(s + ".amount")) builder.amount(bukkitConfiguration.getInt(s + ".amount"));
         if (bukkitConfiguration.contains(s + ".displayname")) builder.displayname(bukkitConfiguration.getString(s + ".displayname"));
         if (bukkitConfiguration.contains(s + ".lore")) {
-            for (String s1 : bukkitConfiguration.getStringList(s + ".lore")) {
+            List<String> lore = Serializers.of(List.class).deserialize(s + ".lore", bukkitConfiguration);
+            for (String s1 : lore) {
                 builder.lore(GradientUtils.colorize(s1));
+                Bukkit.broadcastMessage(">>> " + s1);
             }
+
         }
         if (bukkitConfiguration.getBoolean(s + ".glow")) builder.glow();
         return builder.build();

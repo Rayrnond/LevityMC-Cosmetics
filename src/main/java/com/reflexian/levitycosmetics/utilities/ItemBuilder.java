@@ -1,6 +1,7 @@
 package com.reflexian.levitycosmetics.utilities;
 
 import com.google.gson.Gson;
+import dev.lone.itemsadder.api.CustomStack;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -77,6 +78,7 @@ public class ItemBuilder {
 
     /** Initalizes the ItemBuilder with a {@link org.bukkit.inventory.ItemStack} */
     public ItemBuilder(ItemStack item) {
+        item = item.clone();
         Validate.notNull(item, "The Item is null.");
         this.item = item;
         if(item.hasItemMeta()) this.meta = item.getItemMeta();
@@ -211,6 +213,11 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder itemadderID(String itemadderID) {
+        Validate.notNull(itemadderID, "The itemadderID is null.");
+        return new ItemBuilder(CustomStack.getInstance(itemadderID).getItemStack());
+    }
+
     /**
      * Adds a Line to the Lore of the ItemStack
      * @param line Line of the Lore for the ItemStack
@@ -265,6 +272,12 @@ public class ItemBuilder {
     public ItemBuilder lore(String line, int index) {
         Validate.notNull(line, "The Line is null.");
         lore.set(index, andSymbol ? GradientUtils.colorize(line) : line);
+        return this;
+    }
+
+
+    public ItemBuilder clearLore() {
+        lore = new ArrayList<>();
         return this;
     }
 
