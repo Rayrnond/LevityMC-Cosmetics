@@ -1,4 +1,4 @@
-package com.reflexian.levitycosmetics.utilities;
+package com.reflexian.levitycosmetics.utilities.uncategorizied;
 
 import fr.minuskube.inv.content.SlotPos;
 

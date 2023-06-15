@@ -1,4 +1,4 @@
-package com.reflexian.levitycosmetics.utilities;
+package com.reflexian.levitycosmetics.utilities.uncategorizied;
 
 import net.md_5.bungee.api.ChatColor;
 

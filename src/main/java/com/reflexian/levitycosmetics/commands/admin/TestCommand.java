@@ -2,7 +2,7 @@ package com.reflexian.levitycosmetics.commands.admin;
 
 import com.reflexian.levitycosmetics.data.objects.user.UserData;
 import com.reflexian.levitycosmetics.data.objects.user.UserDataService;
-import com.reflexian.levitycosmetics.utilities.GradientUtils;
+import com.reflexian.levitycosmetics.utilities.uncategorizied.GradientUtils;
 import com.reflexian.rapi.api.annotation.CommandInfo;
 import com.reflexian.rapi.api.command.Command;
 import org.bukkit.command.CommandSender;
@@ -17,7 +17,7 @@ public class TestCommand extends Command {
         Player player = (Player) sender;
         UserData userData = UserDataService.shared.retrieveUserFromCache(player.getUniqueId());
         player.sendMessage("§c" + userData.isTradeBanned());
-        player.sendMessage("Cosmetics: " + userData.getAllCosmetics().stream().map(cosmetic -> GradientUtils.colorize(cosmetic.asChatColor().getName())).collect(Collectors.joining(", ")));
+        player.sendMessage("Cosmetics: " + userData.getAllCosmetics().stream().map(cosmetic -> GradientUtils.colorize(cosmetic.getName())).collect(Collectors.joining(", ")));
         return true;
     }
 }

@@ -15,9 +15,8 @@ public class LHat extends Cosmetic implements Serializable {
 
     private String id;
     private String name;
-    private LChatColor chatColor;
-    private LTitle title;
-    private String permission;
+    private String chatColorId=""; // empty = none
+    private String lTitleId="";
     private ItemStack itemStack;
 
     @Override

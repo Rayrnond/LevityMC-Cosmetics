@@ -1,47 +1,94 @@
 package com.reflexian.levitycosmetics.data.objects.user;
 
+import com.reflexian.levitycosmetics.data.objects.chatcolors.LChatColor;
 import com.reflexian.levitycosmetics.data.objects.cosmetic.Cosmetic;
+import com.reflexian.levitycosmetics.data.objects.hat.LHat;
+import com.reflexian.levitycosmetics.data.objects.titles.LTitle;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-@Data@AllArgsConstructor
+@Getter
 public class UserData implements Serializable {
     private UUID uuid;
-    private List<String> cosmeticIds;
-    private List<String> selectedCosmetics;
-    private boolean tradeBanned;
-    private long timestamp;
+
+    public UserData(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    private Set<String> unknownCosmetics = new HashSet<>();
+    private Set<Cosmetic> allCosmetics = new HashSet<>();
+
+    @Setter
+    private transient LChatColor selectedChatColor=null;
+    @Setter
+    private transient LHat selectedHat=null;
+    @Setter
+    private transient LTitle selectedTitle=null;
+
+
+    private boolean tradeBanned=false;
+    private long timestamp=System.currentTimeMillis();
 
 
 
     public Set<Cosmetic> getAllCosmetics() {
-        final Set<Cosmetic> cosmetics = new HashSet<>();
-        for (String cosmeticId : cosmeticIds) {
-            Cosmetic cosmetic = Cosmetic.getCosmetic(cosmeticId);
-            if (cosmetic != null) {
-                cosmetics.add(cosmetic);
-            }
-        }
-        return cosmetics;
+        return allCosmetics;
     }
 
     public static UserData fromResultSet(ResultSet resultSet) throws SQLException {
-        UUID userId = UUID.fromString(resultSet.getString("user_id"));
-        List<String> cosmeticIds = new ArrayList<>();
-        Collections.addAll(cosmeticIds, resultSet.getString("cosmetic_ids").split(";"));
 
-        List<String> selectedCosmeticIds = new ArrayList<>();
-        Collections.addAll(selectedCosmeticIds, resultSet.getString("selected_cosmetic_ids").split(";"));
+        final UserData userData = new UserData(UUID.randomUUID());
+        userData.uuid = UUID.fromString(resultSet.getString("user_id"));
 
-        long timestamp = resultSet.getLong("timestamp");
-        boolean tradeBanned = resultSet.getBoolean("trade_banned");
+        userData.unknownCosmetics = Set.of(resultSet.getString("cosmetic_ids").split(";"));
+        for (String unknownCosmetic : userData.getUnknownCosmetics()) {
+            Cosmetic cosmetic = Cosmetic.getCosmetic(unknownCosmetic);
+            if (cosmetic == null) continue;
+            userData.getAllCosmetics().add(cosmetic);
+        }
 
-        return new UserData(userId, cosmeticIds, selectedCosmeticIds,  tradeBanned, timestamp);
+        List<String> selectedCosmeticIds = new ArrayList<>(List.of(resultSet.getString("selected_cosmetic_ids").split(";")));
+
+        for (String selectedCosmeticId : selectedCosmeticIds) {
+            Cosmetic cosmetic = Cosmetic.getCosmetic(selectedCosmeticId);
+            if (cosmetic == null) continue;
+            if (cosmetic instanceof LChatColor lChatColor) {
+                userData.selectedChatColor = lChatColor;
+            } else if (cosmetic instanceof LHat lHat) {
+                userData.selectedHat = lHat;
+            } else if (cosmetic instanceof LTitle lTitle) {
+                userData.selectedTitle = lTitle;
+            }
+        }
+
+        userData.timestamp = resultSet.getLong("timestamp");
+        userData.tradeBanned = resultSet.getBoolean("trade_banned");
+        return userData;
+    }
+
+    public Set<String> getDatabaseCosmeticIds() {
+        Set<String> cosmeticIds = new HashSet<>();
+        for (Cosmetic cosmetic : getAllCosmetics()) {
+            cosmeticIds.add(cosmetic.getUniqueId());
+        }
+        cosmeticIds.addAll(getUnknownCosmetics());
+
+        return cosmeticIds;
+    }
+
+    public Set<String> getDatabaseSelectedIds() {
+        Set<String> cosmeticIds = new HashSet<>();
+        if (selectedChatColor != null) cosmeticIds.add(selectedChatColor.getUniqueId());
+        if (selectedHat != null) cosmeticIds.add(selectedHat.getUniqueId());
+        if (selectedTitle != null) cosmeticIds.add(selectedTitle.getUniqueId());
+        return cosmeticIds;
     }
 }
 

@@ -6,13 +6,15 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
 
-@Builder@Getter@Setter@AllArgsConstructor@NoArgsConstructor
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor@NoArgsConstructor
 public class LChatColor extends Cosmetic implements Serializable {
 
     private String id;
     private String name;
     private String color;
-    private String permission;
     private ItemStack itemStack;
 
     @Override

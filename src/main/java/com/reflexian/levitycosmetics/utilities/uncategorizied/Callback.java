@@ -1,4 +1,4 @@
-package com.reflexian.levitycosmetics.utilities;
+package com.reflexian.levitycosmetics.utilities.uncategorizied;
 
 public interface Callback<T>
 {

@@ -1,7 +1,7 @@
-package com.reflexian.levitycosmetics.data.configs;
+package com.reflexian.levitycosmetics.data.configs.cosmetic;
 
 import com.reflexian.levitycosmetics.data.objects.chatcolors.LChatColor;
-import com.reflexian.levitycosmetics.utilities.ItemBuilder;
+import com.reflexian.levitycosmetics.utilities.uncategorizied.ItemBuilder;
 import org.bukkit.Material;
 import pl.mikigal.config.Config;
 import pl.mikigal.config.annotation.Comment;
@@ -23,7 +23,6 @@ public interface ChatColorConfig extends Config {
             #
             # id: identifier for the cosmetic.
             # name: name of the cosmetic. 
-            # permission: permission required to use the cosmetic, blank for nothing
             # itemStack: itemstack of the cosmetic in GUI
             
             """)
@@ -31,12 +30,12 @@ public interface ChatColorConfig extends Config {
         return Arrays.asList(
                 LChatColor.builder()
                         .id("0")
-                        .name("&bSolid Chat Color %s")
-                        .permission("levitycosmetics.chatcolor.solid")
+                        .name("&bSolid Chat Color")
                         .color("&b%message%")
                         .itemStack(new ItemBuilder(Material.GOLDEN_CARROT)
                                 .replaceAndSymbol(false)
                                 .amount(1)
+                                .lore("&7Click to equip this chat color!")
                                 .displayname("&bSolid Chat Color")
                                 .build())
                         .build(),
@@ -44,11 +43,11 @@ public interface ChatColorConfig extends Config {
                 LChatColor.builder()
                         .id("1")
                         .name("<#F5C9C9>Red Gradient Chat Color %s<#B8A4C9>")
-                        .permission("levitycosmetics.chatcolor.red")
                         .color("<#F5C9C9>%message%<#B8A4C9>")
                         .itemStack(new ItemBuilder(Material.ALLAY_SPAWN_EGG)
                                 .replaceAndSymbol(false)
                                 .amount(1)
+                                .lore("&7Click to equip this chat color!")
                                 .displayname("<#F5C9C9>Red Gradient Chat Color<#B8A4C9>")
                                 .build())
                         .build(),
@@ -56,11 +55,11 @@ public interface ChatColorConfig extends Config {
                 LChatColor.builder()
                         .id("2")
                         .name("<#F5C9C9>Another Chat Color<#B8A4C9>")
-                        .permission("levitycosmetics.chatcolor.another")
                         .color("<#F5C9C9>%message%<#B8A4C9>")
                         .itemStack(new ItemBuilder(Material.RED_CARPET)
                                 .replaceAndSymbol(false)
                                 .amount(1)
+                                .lore("&7Click to equip this chat color!")
                                 .displayname("<#F5C9C9>Another Chat Color<#B8A4C9>")
                                 .build())
                         .build()

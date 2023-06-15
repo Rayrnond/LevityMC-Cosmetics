@@ -2,12 +2,11 @@ package com.reflexian.levitycosmetics.data.inventories;
 
 import com.reflexian.levitycosmetics.LevityCosmetics;
 import com.reflexian.levitycosmetics.data.objects.chatcolors.LChatColor;
-import com.reflexian.levitycosmetics.utilities.GradientUtils;
+import com.reflexian.levitycosmetics.utilities.uncategorizied.GradientUtils;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class ChatColorInventory implements InventoryProvider {

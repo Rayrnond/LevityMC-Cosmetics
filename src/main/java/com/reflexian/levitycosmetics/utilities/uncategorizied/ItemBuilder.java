@@ -1,10 +1,9 @@
-package com.reflexian.levitycosmetics.utilities;
+package com.reflexian.levitycosmetics.utilities.uncategorizied;
 
 import com.google.gson.Gson;
 import dev.lone.itemsadder.api.CustomStack;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;

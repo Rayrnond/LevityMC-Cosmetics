@@ -1,7 +1,7 @@
 package com.reflexian.levitycosmetics.data.objects.user;
 
-import com.reflexian.levitycosmetics.utilities.Callback;
-import com.reflexian.levitycosmetics.utilities.DataService;
+import com.reflexian.levitycosmetics.utilities.uncategorizied.Callback;
+import com.reflexian.levitycosmetics.utilities.uncategorizied.DataService;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,12 +23,12 @@ public class UserDataService extends DataService {
             try (Connection connection = getDatabase().getConnection();
                  PreparedStatement statement = connection.prepareStatement("INSERT INTO `userdata` (`user_id`, `cosmetic_ids`, `selected_cosmetic_ids`, `trade_banned`, `timestamp`) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `cosmetic_ids` = ?, `selected_cosmetic_ids` = ?, `trade_banned` = ?, `timestamp` = ?")) {
                 statement.setString(1, userData.getUuid().toString());
-                statement.setString(2, String.join(";", userData.getCosmeticIds()));
-                statement.setString(3, String.join(";", userData.getSelectedCosmetics()));
+                statement.setString(2, String.join(";", userData.getDatabaseCosmeticIds()));
+                statement.setString(3, String.join(";", userData.getDatabaseSelectedIds()));
                 statement.setBoolean(4, userData.isTradeBanned());
                 statement.setLong(5, userData.getTimestamp());
-                statement.setString(6, String.join(";", userData.getCosmeticIds()));
-                statement.setString(7, String.join(";", userData.getSelectedCosmetics()));
+                statement.setString(6, String.join(";", userData.getDatabaseCosmeticIds()));
+                statement.setString(7, String.join(";", userData.getDatabaseSelectedIds()));
                 statement.setBoolean(8, userData.isTradeBanned());
                 statement.setLong(9, userData.getTimestamp());
                 statement.executeUpdate();

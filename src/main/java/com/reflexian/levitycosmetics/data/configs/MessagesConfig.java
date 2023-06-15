@@ -1,6 +1,7 @@
 package com.reflexian.levitycosmetics.data.configs;
 
 import pl.mikigal.config.Config;
+import pl.mikigal.config.annotation.Comment;
 import pl.mikigal.config.annotation.ConfigName;
 import pl.mikigal.config.annotation.ConfigPath;
 
@@ -8,9 +9,10 @@ import pl.mikigal.config.annotation.ConfigPath;
 public interface MessagesConfig extends Config {
 
 
-    @ConfigPath("mysql.host")
-    default String getDatabaseHost() {
-        return "127.0.0.1";
+    @Comment("The message sent to the player when they select a cosmetic. Use %cosmetic% for the cosmetic name.")
+    @ConfigPath("backpack.selected")
+    default String getBackpackSelectMessage() {
+        return "&aYou have selected the %cosmetic% &acosmetic!";
     }
 
 

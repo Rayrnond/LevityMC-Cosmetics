@@ -1,6 +1,7 @@
 package com.reflexian.levitycosmetics.utilities.serializers;
 
 import com.reflexian.levitycosmetics.data.objects.chatcolors.LChatColor;
+import com.reflexian.levitycosmetics.data.objects.cosmetic.Cosmetic;
 import pl.mikigal.config.BukkitConfiguration;
 import pl.mikigal.config.serializer.Serializer;
 
@@ -12,19 +13,19 @@ public class ChatColorSerializer extends Serializer<LChatColor> {
         bukkitConfiguration.set(s + ".id", lChatColor.getId());
         bukkitConfiguration.set(s + ".name", lChatColor.getName());
         bukkitConfiguration.set(s + ".color", lChatColor.getColor());
-        bukkitConfiguration.set(s + ".permission", lChatColor.getPermission());
         bukkitConfiguration.set(s + ".itemstack", lChatColor.getItemStack());
     }
 
     @Override
     public LChatColor deserialize(String s, BukkitConfiguration bukkitConfiguration) {
 
-        return new LChatColor(
+        LChatColor chatColor = new LChatColor(
                 bukkitConfiguration.getString(s + ".id"),
                 bukkitConfiguration.getString(s + ".name"),
                 bukkitConfiguration.getString(s + ".color"),
-                bukkitConfiguration.getString(s + ".permission"),
                 new ConfigItemSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
         );
+        Cosmetic.addCosmetic(chatColor);
+        return chatColor;
     }
 }

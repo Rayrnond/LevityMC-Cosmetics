@@ -1,7 +1,7 @@
 package com.reflexian.levitycosmetics.utilities.serializers;
 
-import com.reflexian.levitycosmetics.utilities.GradientUtils;
-import com.reflexian.levitycosmetics.utilities.ItemBuilder;
+import com.reflexian.levitycosmetics.utilities.uncategorizied.GradientUtils;
+import com.reflexian.levitycosmetics.utilities.uncategorizied.ItemBuilder;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -30,8 +30,6 @@ public class ConfigItemSerializer extends Serializer<ItemStack> {
     @Override
     public ItemStack deserialize(String s, BukkitConfiguration bukkitConfiguration) {
 
-
-
         ItemBuilder builder = new ItemBuilder(Material.valueOf(bukkitConfiguration.getString(s + ".material").toUpperCase()));
 
 
@@ -54,7 +52,6 @@ public class ConfigItemSerializer extends Serializer<ItemStack> {
             List<String> lore = Serializers.of(List.class).deserialize(s + ".lore", bukkitConfiguration);
             for (String s1 : lore) {
                 builder.lore(GradientUtils.colorize(s1));
-                Bukkit.broadcastMessage(">>> " + s1);
             }
 
         }

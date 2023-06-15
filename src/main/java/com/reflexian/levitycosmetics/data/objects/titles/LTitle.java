@@ -12,7 +12,6 @@ public class LTitle extends Cosmetic implements Serializable {
     private String id;
     private String name;
     private String tag;
-    private String permission;
     private ItemStack itemStack;
 
     @Override

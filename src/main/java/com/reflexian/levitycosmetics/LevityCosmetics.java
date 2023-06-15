@@ -1,13 +1,14 @@
 package com.reflexian.levitycosmetics;
 
 import com.reflexian.levitycosmetics.data.Database;
-import com.reflexian.levitycosmetics.data.configs.ChatColorConfig;
+import com.reflexian.levitycosmetics.data.configs.cosmetic.ChatColorConfig;
 import com.reflexian.levitycosmetics.data.configs.DefaultConfig;
 import com.reflexian.levitycosmetics.data.configs.GUIConfig;
 import com.reflexian.levitycosmetics.data.configs.MessagesConfig;
+import com.reflexian.levitycosmetics.data.configs.cosmetic.TitleConfig;
 import com.reflexian.levitycosmetics.data.objects.chatcolors.LChatColor;
 import com.reflexian.levitycosmetics.data.objects.titles.LTitle;
-import com.reflexian.levitycosmetics.utilities.LevityPlaceholders;
+import com.reflexian.levitycosmetics.utilities.uncategorizied.LevityPlaceholders;
 import com.reflexian.levitycosmetics.utilities.serializers.ChatColorSerializer;
 import com.reflexian.levitycosmetics.utilities.serializers.ConfigItemSerializer;
 import com.reflexian.levitycosmetics.utilities.serializers.TitleSerializer;
@@ -15,7 +16,6 @@ import com.reflexian.rapi.RAPI;
 import fr.minuskube.inv.InventoryManager;
 import lombok.Getter;
 import lombok.Setter;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,6 +34,9 @@ public final class LevityCosmetics extends JavaPlugin {
 
     @Setter private ChatColorConfig chatColorConfig;
     @Setter private GUIConfig guiConfig;
+    @Setter private TitleConfig titleConfig;
+
+
     private InventoryManager inventoryManager;
 
 

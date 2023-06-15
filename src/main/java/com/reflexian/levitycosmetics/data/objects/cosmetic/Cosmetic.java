@@ -3,12 +3,12 @@ package com.reflexian.levitycosmetics.data.objects.cosmetic;
 import com.reflexian.levitycosmetics.data.objects.chatcolors.LChatColor;
 import com.reflexian.levitycosmetics.data.objects.titles.LTitle;
 import com.reflexian.levitycosmetics.data.objects.user.UserData;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public abstract class Cosmetic {
-
 
     private static final Set<Cosmetic> cosmetics = new HashSet<>();
     public static Set<Cosmetic> getAllCosmetics() {
@@ -24,20 +24,18 @@ public abstract class Cosmetic {
         cosmetics.remove(cosmetic);
     }
 
-    public Cosmetic() {
-        cosmetics.add(this);
-    }
+    public Cosmetic() {}
 
     public abstract String getUniqueId();
+    public abstract ItemStack getItemStack();
+    public abstract String getName();
 
     public void giveToUser(UserData userData) {
-        if (!userData.getCosmeticIds().contains(getUniqueId())) {
-            userData.getCosmeticIds().add(getUniqueId());
-        }
+        userData.getAllCosmetics().add(this);
     }
 
     public void removeFromUser(UserData userData) {
-        userData.getCosmeticIds().remove(getUniqueId());
+        userData.getAllCosmetics().remove(this);
     }
 
 

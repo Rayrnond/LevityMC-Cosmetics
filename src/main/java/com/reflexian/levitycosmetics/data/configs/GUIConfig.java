@@ -1,6 +1,6 @@
 package com.reflexian.levitycosmetics.data.configs;
 
-import com.reflexian.levitycosmetics.utilities.ItemBuilder;
+import com.reflexian.levitycosmetics.utilities.uncategorizied.ItemBuilder;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -61,8 +61,8 @@ public interface GUIConfig extends Config {
     default ItemStack getBackpackErrorItem() {
         ItemBuilder itemBuilder = new ItemBuilder(CustomStack.getInstance("_iainternal:icon_cancel").getItemStack());
         itemBuilder.replaceAndSymbol(false);
-        itemBuilder.displayname("<#FF0000>No Items<#8D1338>");
-        itemBuilder.lore("<#9E9E9E>You don't have any cosmetics! Purchase some at &nlevitymc.com!");
+        itemBuilder.displayname("<#FF0000>No Cosmetics<#8D1338>");
+        itemBuilder.lore("<#9E9E9E>This category doesn't have any cosmetics!");
         return itemBuilder.build();
     }
 
@@ -92,7 +92,7 @@ public interface GUIConfig extends Config {
     }
     @ConfigPath("gui.backpack.filter-button.not-selected")
     default String getBackpackFilterNotSelectedIcon() {
-        return "<#9E9E9E>⦿";
+        return "<#9E9E9E>◉";
     }
 
     @Comment("Fills all air pockets in the backpack GUI.")
