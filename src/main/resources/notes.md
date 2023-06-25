@@ -4,6 +4,11 @@ Game Version: 1.19.4
 %abysseconomy_<currency>_raw% - The raw amount of currency the player has
 Cosmetics:
 
+Tabcolor, Crown, Glow, Hat, ChatColor, Nickname Ticket, Nickname Paint, Title, Title Paint, 
+
+
+
+
 Hats:
  - Tabcolor
  - Crown (icon in front of name)

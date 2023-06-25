@@ -1,7 +1,7 @@
 package com.reflexian.levitycosmetics.data.configs.cosmetic;
 
-import com.reflexian.levitycosmetics.data.objects.chatcolors.LChatColor;
-import com.reflexian.levitycosmetics.data.objects.titles.LTitle;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitle;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitlePaint;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.ItemBuilder;
 import org.bukkit.Material;
 import pl.mikigal.config.Config;
@@ -30,27 +30,59 @@ public interface TitleConfig extends Config {
     default List<LTitle> getTitles() {
         return Arrays.asList(
                 LTitle.builder()
-                        .id("0")
-                        .name("<#F5C9C9>Lava<#B8A4C9> Title")
-                        .tag("<#F5C9C9>Lava<#B8A4C9>")
+                        .name("LavaTitle")
+                        .tag("<gradient:#F5C9C9:#B8A4C9>Lava</gradient>")
                         .itemStack(new ItemBuilder(Material.GOLDEN_CARROT)
                                 .replaceAndSymbol(false)
                                 .amount(1)
-                                .displayname("<#F5C9C9>Lava<#B8A4C9> Title")
+                                .displayname("<gradient:#F5C9C9:#B8A4C9>Lava Title</gradient>")
                                 .build())
                         .build(),
 
                 LTitle.builder()
-                        .id("1")
-                        .name("<#6A11A5>PurpleMist<#E707FA> Title")
-                        .tag("<#6A11A5>PurpleMist<#E707FA>")
+                        .name("PurpleMistTitle")
+                        .tag("<gradient:#6A11A5:#E707FA>PurpleMist</gradient>")
                         .itemStack(new ItemBuilder(Material.ALLAY_SPAWN_EGG)
                                 .replaceAndSymbol(false)
                                 .amount(1)
-                                .displayname("<#6A11A5>PurpleMist<#E707FA> Title")
+                                .displayname("<gradient:#6A11A5:#E707FA>PurpleMist Title</gradient>")
                                 .build())
                         .build()
         );
     }
 
+
+    @ConfigPath("paints")
+    @Comment("""
+            # This is a list of title paint cosmetics. Each cosmetic in the plugin has a unique id, which is stored in the database.
+            # Do not change the id unless you know what you are doing!
+            #
+            # name: identifier for the cosmetic, no spaces.
+            # color: color of the cosmetic. Keep %tag% in, which is replaced with the tag. 
+            # itemStack: itemstack of the cosmetic in GUI
+            
+            """)
+    default List<LTitlePaint> getTitlePaints() {
+        return Arrays.asList(
+                LTitlePaint.builder()
+                        .name("LavaTagColor")
+                        .color("<gradient:#F5C9C9:#B8A4C9>%tag%</gradient>")
+                        .itemStack(new ItemBuilder(Material.EMERALD)
+                                .replaceAndSymbol(false)
+                                .amount(1)
+                                .displayname("<gradient:#F5C9C9:#B8A4C9>Lava Title Paint</gradient>")
+                                .build())
+                        .build(),
+
+                LTitlePaint.builder()
+                        .name("PurpleMistTagColor")
+                        .color("<gradient:#6A11A5:#E707FA>%tag%</gradient>")
+                        .itemStack(new ItemBuilder(Material.DIAMOND)
+                                .replaceAndSymbol(false)
+                                .amount(1)
+                                .displayname("<gradient:#6A11A5:#E707FA>PurpleMist Title Paint</gradient>")
+                                .build())
+                        .build()
+        );
+    }
 }

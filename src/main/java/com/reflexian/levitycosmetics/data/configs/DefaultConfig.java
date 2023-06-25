@@ -1,5 +1,8 @@
 package com.reflexian.levitycosmetics.data.configs;
 
+import com.reflexian.levitycosmetics.utilities.uncategorizied.ItemBuilder;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import pl.mikigal.config.Config;
 import pl.mikigal.config.annotation.Comment;
 import pl.mikigal.config.annotation.ConfigName;
@@ -39,5 +42,36 @@ public interface DefaultConfig extends Config {
     }
 
 
+    @Comment("Default backpack pages")
+    @ConfigPath("backpack.default-pages")
+    default int getBackpackPages() {
+        return 3;
+    }
+
+    @Comment("The price per backpack page")
+    @ConfigPath("backpack.additional-price")
+    default int getBackpackPrice() {
+        return 1000;
+    }
+
+    @Comment("This is the item used for nickname tickets")
+    @ConfigPath("items.nickname.ticket")
+    default ItemStack getNicknameTicket() {
+        ItemBuilder itemBuilder = new ItemBuilder(Material.NAME_TAG);
+        itemBuilder.replaceAndSymbol(false);
+        itemBuilder.displayname("<color:red>Nickname Ticket");
+        itemBuilder.lore("<color:gray>Use this ticket redeem a custom name!","<color:gray>Right click to use!");
+        return itemBuilder.build();
+    }
+
+    @Comment("This is the item shown in backpack")
+    @ConfigPath("items.nickname.backpack")
+    default ItemStack getNicknameCosmeticBackpackItem() {
+        ItemBuilder itemBuilder = new ItemBuilder(Material.NAME_TAG);
+        itemBuilder.replaceAndSymbol(false);
+        itemBuilder.displayname("<color:red>Nickname: %nickname%");
+        itemBuilder.lore("<color:gray>Click to select this nickname!");
+        return itemBuilder.build();
+    }
 
 }

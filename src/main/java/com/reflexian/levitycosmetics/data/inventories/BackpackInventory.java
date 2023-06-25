@@ -1,25 +1,35 @@
 package com.reflexian.levitycosmetics.data.inventories;
 
 import com.reflexian.levitycosmetics.LevityCosmetics;
+import com.reflexian.levitycosmetics.data.Database;
+import com.reflexian.levitycosmetics.data.configs.ConfigurationLoader;
 import com.reflexian.levitycosmetics.data.configs.GUIConfig;
-import com.reflexian.levitycosmetics.data.objects.chatcolors.LChatColor;
-import com.reflexian.levitycosmetics.data.objects.cosmetic.Cosmetic;
-import com.reflexian.levitycosmetics.data.objects.titles.LTitle;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.chatcolors.LChatColor;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LHat;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.nickname.AssignedNickname;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.nickname.LNicknamePaint;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.AssignedTitle;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitle;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitlePaint;
 import com.reflexian.levitycosmetics.data.objects.user.UserData;
 import com.reflexian.levitycosmetics.data.objects.user.UserDataService;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.GradientUtils;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.InvUtils;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.ItemBuilder;
+import com.reflexian.levitycosmetics.utilities.uncategorizied.LevityPlaceholders;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BackpackInventory implements InventoryProvider {
@@ -27,7 +37,7 @@ public class BackpackInventory implements InventoryProvider {
             .id("backpackInventory")
             .provider(new BackpackInventory())
             .size(5, 9)
-            .title(GradientUtils.colorize(LevityCosmetics.getInstance().getGuiConfig().getBackpackTitle()))
+            .title(GradientUtils.colorize(ConfigurationLoader.GUI_CONFIG.getBackpackTitle()))
             .manager(LevityCosmetics.getInstance().getInventoryManager())
             .build();
 
@@ -40,65 +50,63 @@ public class BackpackInventory implements InventoryProvider {
     }
 
     private void showInventory(Player player, InventoryContents contents, int page, final int filtered) {
+
+        final UserData userData = UserDataService.shared.retrieveUserFromCache(player.getUniqueId());
+        var cosmetics = UserDataService.shared.retrieveUserFromCache(player.getUniqueId()).getAllCosmetics();
+        cosmetics.addAll(userData.getAssignedNicknames());
+        cosmetics.addAll(userData.getAssignedTitles());
+        cosmetics.removeIf(e->e instanceof LTitle);
+
         contents.fill(ClickableItem.empty(new ItemStack(Material.AIR)));
-        GUIConfig guiConfig = LevityCosmetics.getInstance().getGuiConfig();
+        GUIConfig guiConfig = ConfigurationLoader.GUI_CONFIG;
         contents.fillBorders(ClickableItem.empty(guiConfig.getBackpackFillerItem()));
-        if (page!=0) {
-            contents.set(InvUtils.getPos(guiConfig.getBackpackBackItemSlot()), ClickableItem.of(guiConfig.getBackpackBackItem(), e->{
-                showInventory(player, contents, page-1, filtered);
-            }));
-        }
-        contents.set(InvUtils.getPos(guiConfig.getBackpackNextItemSlot()), ClickableItem.of(guiConfig.getBackpackNextItem(), e->{
-            showInventory(player, contents, page+1, filtered);
-        }));
+
 
         contents.set(InvUtils.getPos(guiConfig.getBackpackFilterSlot()), ClickableItem.of(getFilter(filtered), e->{
-            showInventory(player, contents, 0, filtered > 4 ? 0 : filtered+1);
+            showInventory(player, contents, 0, filtered > 3 ? 0 : filtered+1);
+        }));
+
+        contents.set(InvUtils.getPos(guiConfig.getBackpackResetSlot()), ClickableItem.of(guiConfig.getBackpackResetItem(), e->{
+            player.sendMessage(GradientUtils.colorize(LevityCosmetics.getInstance().getMessagesConfig().getBackpackResetMessage()));
+            userData.setSelectedCrown(null);
+            userData.setSelectedGlow(null);
+            userData.setSelectedHat(null);
+            userData.setSelectedTitle(null);
+            userData.setSelectedNickname(null);
+            userData.setSelectedChatColor(null);
+            userData.setSelectedTabColor(null);
         }));
 
 
-        var cosmetics = Cosmetic.getAllCosmetics(); //UserDataService.shared.retrieveUserFromCache(player.getUniqueId()).getAllCosmetics();
-
         switch (filtered) {
-            case 1 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic instanceof LChatColor).collect(Collectors.toSet());
-            case 4 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic instanceof LTitle).collect(Collectors.toSet());
+            case 1 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic instanceof LHat).collect(Collectors.toSet());
+            case 2 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic instanceof LChatColor).collect(Collectors.toSet());
+            case 3 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic instanceof AssignedNickname).collect(Collectors.toSet());
+            case 4 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic instanceof AssignedTitle).collect(Collectors.toSet());
             default -> {}
-//            case 2 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic instanceof LParticle).collect(Collectors.toList());
-//            case 3 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic instanceof LEmote).collect(Collectors.toList());
-//            case 4 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic instanceof LTrail).collect(Collectors.toList());
         }
 
-
-        // sort cosmetics by name
         cosmetics = cosmetics.stream().sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName())).collect(Collectors.toCollection(LinkedHashSet::new));
-
-        // get first 21 cosmetics depending on page
         cosmetics = cosmetics.stream().skip(page * 21L).limit(21).collect(Collectors.toCollection(LinkedHashSet::new));
 
-        // start with slot 10, every 7 add 2 until 21
         int slot = 10;
         for (var cosmetic : cosmetics) {
             if (slot == 17 || slot == 18) slot = 19;
             else if (slot == 26 || slot == 27) slot = 28;
 
-            contents.set(InvUtils.getPos(slot), ClickableItem.of(cosmetic.getItemStack(), e -> {
-                UserData userData = UserDataService.shared.retrieveUserFromCache(player.getUniqueId());
-                if (cosmetic instanceof LChatColor)
-                    userData.setSelectedChatColor(cosmetic.asChatColor());
-                else if (cosmetic instanceof LTitle)
-                    userData.setSelectedTitle(cosmetic.asTitle());
+            ItemStack itemStack = cosmetic.getItemStack().clone();
+            if (userData.getDatabaseSelectedIds().contains(cosmetic.getName())) {
+                ItemBuilder.addLore(itemStack, " ", LevityCosmetics.getInstance().getMessagesConfig().getBackpackItemSelectedMessage());
+            }
 
-                player.sendMessage(GradientUtils.colorize(LevityCosmetics.getInstance().getMessagesConfig().getBackpackSelectMessage().replace("%cosmetic%", GradientUtils.colorize(cosmetic.getName()))));
-                player.closeInventory();
+            contents.set(InvUtils.getPos(slot), ClickableItem.of(itemStack, e -> {
 
-//                else if (cosmetic instanceof LParticle)
-//                    userData.setSelectedParticle((LParticle) cosmetic);
-//                else if (cosmetic instanceof LEmote)
-//                    userData.setSelectedEmote((LEmote) cosmetic);
-//                else if (cosmetic instanceof LTrail)
-//                    userData.setSelectedTrail((LTrail) cosmetic);
-//                else if (cosmetic instanceof LCosmetic)
-//
+                if (cosmetic instanceof LTitlePaint || cosmetic instanceof LNicknamePaint) {
+                    showSelectMenu(player, cosmetic);
+                    return;
+                }
+
+                userData.equip(cosmetic);
             }));
 
             slot++;
@@ -107,9 +115,36 @@ public class BackpackInventory implements InventoryProvider {
             }
         }
 
-        if (cosmetics.size()==0 && page == 0) {
+        int basePages = LevityCosmetics.getInstance().getDefaultConfig().getBackpackPages();
+
+        if (cosmetics.size()==0) {
             contents.set(InvUtils.getPos(guiConfig.getBackpackErrorSlot()), ClickableItem.empty(guiConfig.getBackpackErrorItem()));
+        } else {
+            if (page < basePages + userData.getExtraPages()) {
+                contents.set(InvUtils.getPos(guiConfig.getBackpackNextItemSlot()), ClickableItem.of(guiConfig.getBackpackNextItem(), e -> {
+                    showInventory(player, contents, page + 1, filtered);
+                }));
+            } else {
+                contents.set(InvUtils.getPos(guiConfig.getBackpackNextItemSlot()), ClickableItem.of(guiConfig.getBackpackPurchasePageButton(), e -> {
+                    if (userData.getCredits() < LevityCosmetics.getInstance().getDefaultConfig().getBackpackPrice()) {
+                        player.sendMessage("§cYou don't have enough credits to purchase this page!");
+                        return;
+                    }
+                    userData.setCredits(userData.getCredits() - LevityCosmetics.getInstance().getDefaultConfig().getBackpackPrice());
+                    userData.setExtraPages(userData.getExtraPages() + 1);
+                    player.sendMessage("§aYou have purchased an extra page for your backpack!");
+                    showInventory(player, contents, page + 1, filtered);
+                    UserDataService.shared.save(userData,ef->{});
+                }));
+            }
         }
+        if (page!=0) {
+            contents.set(InvUtils.getPos(guiConfig.getBackpackBackItemSlot()), ClickableItem.of(guiConfig.getBackpackBackItem(), e->{
+                showInventory(player, contents, page-1, filtered);
+            }));
+        }
+
+
     }
 
     @Override
@@ -118,24 +153,85 @@ public class BackpackInventory implements InventoryProvider {
     }
 
     private ItemStack getFilter(int filtered) {
-        final GUIConfig guiConfig = LevityCosmetics.getInstance().getGuiConfig();
+        final GUIConfig guiConfig = ConfigurationLoader.GUI_CONFIG;
         ItemBuilder filterItem = new ItemBuilder(guiConfig.getBackpackFilterItem().clone());
         if (filterItem.getMeta()!=null && filterItem.getMeta().getLore() != null) {
             filterItem.clearLore();
 
-            String selected = GradientUtils.colorize(guiConfig.getBackpackFilterSelectedIcon());
-            String notSelected = GradientUtils.colorize(guiConfig.getBackpackFilterNotSelectedIcon());
+            String selected = guiConfig.getBackpackFilterSelectedIcon();
+            String notSelected = guiConfig.getBackpackFilterNotSelectedIcon();
 
-            for (String l : guiConfig.getBackpackFilterItem().getLore()) {
+            for (String l : guiConfig.getBackpackFilterItem().clone().getLore()) {
                 l=l.replace("%selection1%", filtered==0 ? selected : notSelected);
                 l=l.replace("%selection2%", filtered==1 ? selected : notSelected);
                 l=l.replace("%selection3%", filtered==2 ? selected : notSelected);
                 l=l.replace("%selection4%", filtered==3 ? selected : notSelected);
                 l=l.replace("%selection5%", filtered==4 ? selected : notSelected);
-                l=GradientUtils.colorize(l);
                 filterItem.lore(l);
             }
         }
         return filterItem.build();
+    }
+
+    private void showSelectMenu(Player player, Cosmetic cosmetic) {
+        UserData data = UserDataService.shared.retrieveUserFromCache(player.getUniqueId());
+
+        final Set<Cosmetic> cosmeticList;
+        final boolean titlepaints = cosmetic instanceof LTitlePaint;
+        if (cosmetic instanceof LTitlePaint) {
+            cosmeticList = new HashSet<>(new HashSet<>(data.getAssignedTitles()));
+        } else if (cosmetic instanceof LNicknamePaint) {
+            cosmeticList = new HashSet<>(new HashSet<>(data.getAssignedNicknames()));
+        } else {
+            return;
+        }
+
+
+        InventoryProvider provider = new InventoryProvider() {
+            @Override
+            public void init(Player player, InventoryContents contents) {
+                try {
+                    contents.fillBorders(ClickableItem.empty(ConfigurationLoader.GUI_CONFIG.getBackpackFillerItem()));
+                    for (Cosmetic c : cosmeticList) {
+                        contents.add(ClickableItem.of(c.getItemStack(),e->{
+
+                            try {
+                                if (titlepaints) {
+                                    AssignedTitle title = (AssignedTitle) c;
+                                    title.setPaint(cosmetic.asTitlePaint());
+                                    Database.shared.save(title);
+                                    player.sendMessage("§aYou have set the title paint §e" + cosmetic.getName() + "§a for the title §e" + title.getTitle().getName() + "§a.");
+                                } else {
+                                    AssignedNickname nickname = (AssignedNickname) c;
+                                    nickname.setPaint(cosmetic.asNicknamePaint());
+                                    Database.shared.save(nickname);
+                                    player.sendMessage("§aYou have set the nickname paint §e" + cosmetic.getName() + "§a for the nickname §e" + nickname.getContent() + "§a.");
+                                }
+
+                                cosmetic.removeFromUser(data);
+                                UserDataService.shared.save(data,f->{});
+                                player.closeInventory();
+                            }catch (Exception ef) {
+                                ef.printStackTrace();
+                                player.closeInventory();
+                                player.sendMessage("§cSomething went wrong, report this! *error bpselectcos2*");
+                            }
+                        }));
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                    player.closeInventory();
+                    player.sendMessage("§cSomething went wrong, report this! *error bpselectcos*");
+                }
+            }
+
+            @Override
+            public void update(Player player, InventoryContents contents) {
+
+            }
+        };
+
+        SmartInventory inv = SmartInventory.builder().id("consume").provider(provider).size(5, 9).title("Select a cosmetic").manager(LevityCosmetics.getInstance().getInventoryManager()).build();
+        inv.open(player);
     }
 }

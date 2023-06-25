@@ -16,7 +16,7 @@ public interface GUIConfig extends Config {
     @ConfigPath("gui.backpack.title")
     @Comment("Shown in the backpack GUI as the title.")
     default String getBackpackTitle() {
-        return "<#F9C58D>My Backpack<#F492F0>";
+        return "<gradient:#F9C58D:#F492F0>My Backpack</gradient>";
     }
 
     @Comment("Shown in the backpack GUI as the go to next page button.")
@@ -24,8 +24,8 @@ public interface GUIConfig extends Config {
     default ItemStack getBackpackNextItem() {
         ItemBuilder itemBuilder = new ItemBuilder(CustomStack.getInstance("_iainternal:icon_next_orange").getItemStack());
         itemBuilder.replaceAndSymbol(false);
-        itemBuilder.displayname("<#F9C58D>Next Page<#F492F0>");
-        itemBuilder.lore("<#F492F0>Click to go to the next page");
+        itemBuilder.displayname("<gradient:#F9C58D:#F492F0>Next Page</gradient>");
+        itemBuilder.lore("<color:gray>Click to go to the next page");
         return itemBuilder.build();
     }
 
@@ -34,15 +34,13 @@ public interface GUIConfig extends Config {
     default ItemStack getBackpackFilterItem() {
         ItemBuilder itemBuilder = new ItemBuilder(Material.ARROW);
         itemBuilder.replaceAndSymbol(false);
-        itemBuilder.displayname("<#F9C58D>Filter<#F492F0>");
+        itemBuilder.displayname("<gradient:#F9C58D:#F492F0>Filter</gradient>");
         itemBuilder.lore(" ");
-        itemBuilder.lore("%selection1% <#9E9E9E>All Cosmetics");
-        itemBuilder.lore("%selection2% <#9E9E9E>Hats");
-        itemBuilder.lore("%selection3% <#9E9E9E>Chat Colors");
-        itemBuilder.lore("%selection4% <#9E9E9E>Nicknames");
-        itemBuilder.lore("%selection5% <#9E9E9E>Titles");
-        itemBuilder.lore(" ");
-        itemBuilder.lore("<#F492F0>Click to cycle the filter!");
+        itemBuilder.lore("%selection1% <color:gray>All Cosmetics");
+        itemBuilder.lore("%selection2% <color:gray>Hats");
+        itemBuilder.lore("%selection3% <color:gray>Chat Colors");
+        itemBuilder.lore("%selection4% <color:gray>Nicknames");
+        itemBuilder.lore("%selection5% <color:gray>Titles");
         return itemBuilder.build();
     }
 
@@ -51,8 +49,8 @@ public interface GUIConfig extends Config {
     default ItemStack getBackpackBackItem() {
         ItemBuilder itemBuilder = new ItemBuilder(CustomStack.getInstance("_iainternal:icon_back_orange").getItemStack());
         itemBuilder.replaceAndSymbol(false);
-        itemBuilder.displayname("<#F9C58D>Previous Page<#F492F0>");
-        itemBuilder.lore("<#F492F0>Click to go to the previous page");
+        itemBuilder.displayname("<gradient:#F9C58D:#F492F0>Previous Page</gradient>");
+        itemBuilder.lore("<color:gray>Click to go to the previous page");
         return itemBuilder.build();
     }
 
@@ -61,8 +59,28 @@ public interface GUIConfig extends Config {
     default ItemStack getBackpackErrorItem() {
         ItemBuilder itemBuilder = new ItemBuilder(CustomStack.getInstance("_iainternal:icon_cancel").getItemStack());
         itemBuilder.replaceAndSymbol(false);
-        itemBuilder.displayname("<#FF0000>No Cosmetics<#8D1338>");
-        itemBuilder.lore("<#9E9E9E>This category doesn't have any cosmetics!");
+        itemBuilder.displayname("<color:red>No Cosmetics");
+        itemBuilder.lore("<color:gray>This category doesn't have any cosmetics!");
+        return itemBuilder.build();
+    }
+
+    @Comment("Shown in the backpack GUI as the reset button.")
+    @ConfigPath("gui.backpack.reset-button")
+    default ItemStack getBackpackResetItem() {
+        ItemBuilder itemBuilder = new ItemBuilder(CustomStack.getInstance("_iainternal:icon_cancel").getItemStack());
+        itemBuilder.replaceAndSymbol(false);
+        itemBuilder.displayname("<color:red>Reset Cosmetics");
+        itemBuilder.lore("<color:gray>Unequip all of your cosmetics!");
+        return itemBuilder.build();
+    }
+
+    @Comment("Shown in the backpack GUI as purchase next page button.")
+    @ConfigPath("gui.backpack.purchase-page-button")
+    default ItemStack getBackpackPurchasePageButton() {
+        ItemBuilder itemBuilder = new ItemBuilder(CustomStack.getInstance("_iainternal:icon_cancel").getItemStack());
+        itemBuilder.replaceAndSymbol(false);
+        itemBuilder.displayname("<color:red>Purchase additional page");
+        itemBuilder.lore("<color:gray>Click to buy a new page for 1,000 credits!");
         return itemBuilder.build();
     }
 
@@ -76,6 +94,8 @@ public interface GUIConfig extends Config {
         return 43;
     }
 
+
+
     @ConfigPath("gui.backpack.error.slot")
     default int getBackpackErrorSlot() {
         return 22;
@@ -85,14 +105,18 @@ public interface GUIConfig extends Config {
     default int getBackpackFilterSlot() {
         return 8;
     }
+    @ConfigPath("gui.backpack.reset-button.slot")
+    default int getBackpackResetSlot() {
+        return 7;
+    }
 
     @ConfigPath("gui.backpack.filter-button.selected")
     default String getBackpackFilterSelectedIcon() {
-        return "<#F2DE68>◉";
+        return "<color:yellow>◉";
     }
     @ConfigPath("gui.backpack.filter-button.not-selected")
     default String getBackpackFilterNotSelectedIcon() {
-        return "<#9E9E9E>◉";
+        return "<color:gray>◉";
     }
 
     @Comment("Fills all air pockets in the backpack GUI.")

@@ -26,6 +26,7 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+<!--                    <compilerArgument>-proc:none</compilerArgument>-->
                 </configuration>
             </plugin>
             <plugin>
@@ -55,12 +56,12 @@
 
     <repositories>
         <repository>
-            <id>papermc-repo</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
-        </repository>
-        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>papermc-repo</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>mikigal-repo</id>
@@ -69,6 +70,11 @@
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
+            <layout>default</layout>
         </repository>
     </repositories>
 
@@ -125,6 +131,28 @@
             <artifactId>ConfigAPI</artifactId>
             <version>1.2.4</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.xezard</groupId>
+            <artifactId>XGlowAPI</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>4.14.0</version>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api</artifactId>
+            <version>2.11.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

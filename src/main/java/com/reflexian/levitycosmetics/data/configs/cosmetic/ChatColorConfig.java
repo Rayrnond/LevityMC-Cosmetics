@@ -1,6 +1,6 @@
 package com.reflexian.levitycosmetics.data.configs.cosmetic;
 
-import com.reflexian.levitycosmetics.data.objects.chatcolors.LChatColor;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.chatcolors.LChatColor;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.ItemBuilder;
 import org.bukkit.Material;
 import pl.mikigal.config.Config;
@@ -21,46 +21,65 @@ public interface ChatColorConfig extends Config {
             # This is a list of chatcolor cosmetics. Each cosmetic in the plugin has a unique id, which is stored in the database.
             # Do not change the id unless you know what you are doing!
             #
-            # id: identifier for the cosmetic.
-            # name: name of the cosmetic. 
+            # name: identifier for the cosmetic, no spaces.
+            # color: The color of the message, always include %message% which is replaced with the message.
             # itemStack: itemstack of the cosmetic in GUI
             
             """)
     default List<LChatColor> getChatColors() {
         return Arrays.asList(
                 LChatColor.builder()
-                        .id("0")
-                        .name("&bSolid Chat Color")
-                        .color("&b%message%")
-                        .itemStack(new ItemBuilder(Material.GOLDEN_CARROT)
+                        .name("FireGradientChatColor")
+                        .color("<gradient:#FF0000:#FF4500>%message%</gradient>")
+                        .itemStack(new ItemBuilder(Material.BLAZE_POWDER)
                                 .replaceAndSymbol(false)
                                 .amount(1)
-                                .lore("&7Click to equip this chat color!")
-                                .displayname("&bSolid Chat Color")
+                                .lore("<color:yellow>Click to equip this chat color!")
+                                .displayname("<gradient:#FF0000:#FF4500>Fire Gradient Chat Color</gradient>")
                                 .build())
                         .build(),
 
                 LChatColor.builder()
-                        .id("1")
-                        .name("<#F5C9C9>Red Gradient Chat Color %s<#B8A4C9>")
-                        .color("<#F5C9C9>%message%<#B8A4C9>")
-                        .itemStack(new ItemBuilder(Material.ALLAY_SPAWN_EGG)
+                        .name("OceanGradientChatColor")
+                        .color("<gradient:#0000FF:#00FFFF>%message%</gradient>")
+                        .itemStack(new ItemBuilder(Material.PRISMARINE_SHARD)
                                 .replaceAndSymbol(false)
                                 .amount(1)
-                                .lore("&7Click to equip this chat color!")
-                                .displayname("<#F5C9C9>Red Gradient Chat Color<#B8A4C9>")
+                                .lore("<color:yellow>Click to equip this chat color!")
+                                .displayname("<gradient:#0000FF:#00FFFF>Ocean Gradient Chat Color</gradient>")
                                 .build())
                         .build(),
 
                 LChatColor.builder()
-                        .id("2")
-                        .name("<#F5C9C9>Another Chat Color<#B8A4C9>")
-                        .color("<#F5C9C9>%message%<#B8A4C9>")
-                        .itemStack(new ItemBuilder(Material.RED_CARPET)
+                        .name("GalaxyGradientChatColor")
+                        .color("<gradient:#5500FF:#AA00FF>%message%</gradient>")
+                        .itemStack(new ItemBuilder(Material.NETHER_STAR)
                                 .replaceAndSymbol(false)
                                 .amount(1)
-                                .lore("&7Click to equip this chat color!")
-                                .displayname("<#F5C9C9>Another Chat Color<#B8A4C9>")
+                                .lore("<color:yellow>Click to equip this chat color!")
+                                .displayname("<gradient:#5500FF:#AA00FF>Galaxy Gradient Chat Color</gradient>")
+                                .build())
+                        .build(),
+
+                LChatColor.builder()
+                        .name("RainbowGradientChatColor")
+                        .color("<rainbow>%message%</rainbow>")
+                        .itemStack(new ItemBuilder(Material.PRISMARINE_CRYSTALS)
+                                .replaceAndSymbol(false)
+                                .amount(1)
+                                .lore("<color:yellow>Click to equip this chat color!")
+                                .displayname("<rainbow>Rainbow Gradient Chat Color<rainbow>")
+                                .build())
+                        .build(),
+
+                LChatColor.builder()
+                        .name("EtherealGradientChatColor")
+                        .color("<gradient:#FF69B4:#800080>%message%</gradient>")
+                        .itemStack(new ItemBuilder(Material.ENDER_PEARL)
+                                .replaceAndSymbol(false)
+                                .amount(1)
+                                .lore("<color:yellow>Click to equip this chat color!")
+                                .displayname("<gradient:#FF69B4:#800080>Ethereal Gradient Chat Color</gradient>")
                                 .build())
                         .build()
         );

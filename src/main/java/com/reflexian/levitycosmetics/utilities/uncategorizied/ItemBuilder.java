@@ -2,6 +2,7 @@ package com.reflexian.levitycosmetics.utilities.uncategorizied;
 
 import com.google.gson.Gson;
 import dev.lone.itemsadder.api.CustomStack;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -13,15 +14,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
 
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * ItemBuilder - API Class to create a {@link org.bukkit.inventory.ItemStack} with just one line of Code
  * @version 1.8
- * @author Acquized
- * @contributor Kev575
  */
 public class ItemBuilder {
 
@@ -89,7 +91,9 @@ public class ItemBuilder {
         if(item.hasItemMeta()) this.displayname = item.getItemMeta().getDisplayName();
 
         if(item.hasItemMeta() && item.getItemMeta().hasLore()) {
-            this.lore = item.getItemMeta().getLore();
+            for (String s : item.getItemMeta().getLore()) {
+                lore(s);
+            }
         } else {
             this.lore = new ArrayList<>();
         }
@@ -119,6 +123,19 @@ public class ItemBuilder {
         this.displayname = builder.displayname;
         this.lore = builder.lore;
         this.flags = builder.flags;
+    }
+
+    public static void addLore(ItemStack item, String... lore) {
+        Validate.notNull(item, "The Item is null.");
+        Validate.notNull(lore, "The Lore is null.");
+        ItemMeta meta = item.getItemMeta();
+        List<String> list = meta.getLore();
+        if(list == null) list = new ArrayList<>();
+        for (String s : lore) {
+            list.add(GradientUtils.colorize(s));
+        }
+        meta.setLore(list);
+        item.setItemMeta(meta);
     }
 
     /**
@@ -223,9 +240,10 @@ public class ItemBuilder {
      */
     public ItemBuilder lore(String line) {
         Validate.notNull(line, "The Line is null.");
-        lore.add(andSymbol ? GradientUtils.colorize(line) : line);
+        lore.add(line);
         return this;
     }
+
 
     /**
      * Sets the Lore of the ItemStack
@@ -257,9 +275,7 @@ public class ItemBuilder {
      */
     public ItemBuilder lore(String... lines) {
         Validate.notNull(lines, "The Lines are null.");
-        for (String line : lines) {
-            lore(andSymbol ? GradientUtils.colorize(line) : line);
-        }
+        Collections.addAll(lore, lines);
         return this;
     }
 
@@ -270,7 +286,7 @@ public class ItemBuilder {
      */
     public ItemBuilder lore(String line, int index) {
         Validate.notNull(line, "The Line is null.");
-        lore.set(index, andSymbol ? GradientUtils.colorize(line) : line);
+        lore.set(index, line);
         return this;
     }
 
@@ -542,7 +558,12 @@ public class ItemBuilder {
         if(displayname != null) {
             meta.setDisplayName(displayname);
         }
+        // PB1
         if(lore != null && lore.size() > 0) {
+
+            if (andSymbol) {
+                lore = lore.stream().map(GradientUtils::colorize).collect(Collectors.toList());
+            }
             meta.setLore(lore);
         }
         if(flags != null && flags.size() > 0) {
@@ -555,7 +576,7 @@ public class ItemBuilder {
     }
 
     /** Contains NBT Tags Methods */
-    public class Unsafe {
+    public static class Unsafe {
 
         /** Do not access using this Field*/
         protected final ReflectionUtils utils = new ReflectionUtils();
@@ -639,7 +660,7 @@ public class ItemBuilder {
         }
 
         /** This Class contains highly sensitive NMS Code that should not be touched unless you want to break the ItemBuilder */
-        public class ReflectionUtils {
+        public static class ReflectionUtils {
 
             public String getString(ItemStack item, String key) {
                 Object compound = getNBTTagCompound(getItemAsNMSStack(item));
@@ -767,7 +788,7 @@ public class ItemBuilder {
             }
 
             public Object getNewNBTTagCompound() {
-                String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
+                String ver = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
                 try {
                     return Class.forName("net.minecraft.server." + ver + ".NBTTagCompound").newInstance();
                 } catch (ClassNotFoundException | IllegalAccessException | InstantiationException ex) {
@@ -816,7 +837,7 @@ public class ItemBuilder {
             }
 
             public Class<?> getCraftItemStackClass() {
-                String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
+                String ver = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
                 try {
                     return Class.forName("org.bukkit.craftbukkit." + ver + ".inventory.CraftItemStack");
                 } catch (ClassNotFoundException ex) {

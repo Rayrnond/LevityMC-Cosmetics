@@ -1,7 +1,8 @@
 package com.reflexian.levitycosmetics.data.inventories;
 
 import com.reflexian.levitycosmetics.LevityCosmetics;
-import com.reflexian.levitycosmetics.data.objects.chatcolors.LChatColor;
+import com.reflexian.levitycosmetics.data.configs.ConfigurationLoader;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.chatcolors.LChatColor;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.GradientUtils;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
@@ -22,7 +23,7 @@ public class ChatColorInventory implements InventoryProvider {
     @Override
     public void init(Player player, InventoryContents contents) {
         int i = 0;
-        for (LChatColor chatColor : LevityCosmetics.getInstance().getChatColorConfig().getChatColors()) {
+        for (LChatColor chatColor : ConfigurationLoader.CHAT_COLOR_CONFIG.getChatColors()) {
             contents.set(1, i, ClickableItem.of(chatColor.getItemStack(),e->{
                 player.sendMessage(GradientUtils.colorize(chatColor.getName().formatted("This is a placeholder message")));
             }));

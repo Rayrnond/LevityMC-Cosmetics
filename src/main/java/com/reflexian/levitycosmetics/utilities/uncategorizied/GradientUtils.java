@@ -1,30 +1,74 @@
 package com.reflexian.levitycosmetics.utilities.uncategorizied;
 
+import com.reflexian.levitycosmetics.data.configs.cosmetic.ChatColorConfig;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GradientUtils {
-    final static Pattern pattern = Pattern.compile("<#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})>");
-    public static String colorize(String string) {
-        string = org.bukkit.ChatColor.translateAlternateColorCodes('&', string);
-        String[] hexStrings = extractHexStrings(string);
+    final static Pattern pattern = Pattern.compile("<[^>]*>");
+
+    public static String stripColor(String string) {
+        string = org.bukkit.ChatColor.stripColor(string);
         Matcher matcher = pattern.matcher(string);
         string = matcher.replaceAll("");
-
-        if (hexStrings[0] != null  && string.length() == 1) {
-            string = ChatColor.of(hexStrings[0]) + string;
-        } else {
-            if (hexStrings[0] != null && hexStrings[1] != null) {
-                string = createGradient(string, hexStrings[0], hexStrings[1]);
-            } else if (hexStrings[0]!=null) {
-                string = ChatColor.of(hexStrings[0]) + string;
-            }
-        }
-
         return string;
     }
+
+    public static String colorize(String string) {
+        try {
+            string = ChatColor.stripColor(string);
+            string = string.replaceAll("§", "");
+            var mm = MiniMessage.miniMessage();
+            Component parsed = mm.deserialize(string);
+            parsed = parsed.decoration(TextDecoration.ITALIC, false);
+            return "§r"+LegacyComponentSerializer.builder().useUnusualXRepeatedCharacterHexFormat().hexColors().build().serialize(parsed);
+        }catch (Exception e) {
+            string = ChatColor.stripColor(string);
+            string = string.replaceAll("§", "");
+            return colorize(string);
+        }
+    }
+
+    public static Component getComponent(String string) {
+        string = ChatColor.stripColor(string);
+        string = string.replaceAll("§", "%%%");
+        var mm = MiniMessage.miniMessage();
+        return mm.deserialize(string).decoration(TextDecoration.ITALIC, false).replaceText(TextReplacementConfig.builder().match("%%%").replacement("§").build());
+    }
+
+    public static Component colorizeLore(String string) {
+        string = ChatColor.stripColor(string);
+        string = string.replaceAll("§", "");
+        var mm = MiniMessage.miniMessage();
+        return mm.deserialize(string).decoration(TextDecoration.ITALIC, false);
+    }
+
+//    public static String colorize(String string) {
+//        string = org.bukkit.ChatColor.translateAlternateColorCodes('&', string);
+//        String[] hexStrings = extractHexStrings(string);
+//        Matcher matcher = pattern.matcher(string);
+//        string = matcher.replaceAll("");
+//
+//        if (hexStrings[0] != null  && string.length() == 1) {
+//            string = ChatColor.of(hexStrings[0]) + string;
+//        } else {
+//            if (hexStrings[0] != null && hexStrings[1] != null) {
+//                string = createGradient(string, hexStrings[0], hexStrings[1]);
+//            } else if (hexStrings[0]!=null) {
+//                string = ChatColor.of(hexStrings[0]) + string;
+//            }
+//        }
+//
+//        return string;
+//    }
 
     public static String[] extractHexStrings(String input) {
         Matcher matcher = pattern.matcher(input);

@@ -1,15 +1,11 @@
 package com.reflexian.levitycosmetics.utilities.uncategorizied;
 
-import com.reflexian.levitycosmetics.data.objects.cosmetic.Cosmetic;
 import com.reflexian.levitycosmetics.data.objects.user.UserData;
 import com.reflexian.levitycosmetics.data.objects.user.UserDataService;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
 
 public class LevityPlaceholders extends PlaceholderExpansion {
     @Override
@@ -30,13 +26,75 @@ public class LevityPlaceholders extends PlaceholderExpansion {
     @Override
     public @Nullable String onPlaceholderRequest(Player player, @NotNull String params) {
         UserData userData = UserDataService.shared.retrieveUserFromCache(player.getUniqueId());
-        if (params.equals("title")) {
-            if (userData.getSelectedTitle() == null) return "";
-            return GradientUtils.colorize(userData.getSelectedTitle().getTag().replace("%player%", player.getName()));
-        } else if (params.equals("title_spaced")) {
-            if (userData.getSelectedTitle() == null) return "";
-            return GradientUtils.colorize(userData.getSelectedTitle().getTag().replace("%player%", player.getName() + " "));
+
+
+        String beforeFormatted = "";
+        switch (params) {
+            case "title", "title_spaced" -> {
+                if (userData.getSelectedTitle() != null) {
+                    if (userData.getSelectedTitle().getPaint() != null) {
+                        beforeFormatted = GradientUtils.stripColor(userData.getSelectedTitle().getTitle().getTag());
+                        beforeFormatted = GradientUtils.colorize(userData.getSelectedTitle().getPaint().getColor().replace("%tag%", beforeFormatted));
+                    } else beforeFormatted = userData.getSelectedTitle().getTitle().getTag();
+                }
+            }
+            case "titlepaint", "titlepaint_spaced" -> {
+                if (userData.getSelectedTitle() != null && userData.getSelectedTitle().getPaint() != null) {
+                    beforeFormatted = GradientUtils.stripColor(userData.getSelectedTitle().getTitle().getTag());
+                    beforeFormatted = GradientUtils.colorize(userData.getSelectedTitle().getPaint().getColor().replace("%tag%", beforeFormatted));
+                } else if (userData.getSelectedTitle() != null) {
+                    beforeFormatted = userData.getSelectedTitle().getTitle().getTag();
+                    beforeFormatted = GradientUtils.colorize(beforeFormatted);
+                }
+            }
+            case "tabcolor" -> {
+                beforeFormatted = getTabFormatted(player, userData);
+                beforeFormatted = GradientUtils.colorize(beforeFormatted);
+            }
+            case "chatcolor" -> {
+                if (userData.getSelectedChatColor() != null) {
+                    beforeFormatted = userData.getSelectedChatColor().getColor();
+                    beforeFormatted = GradientUtils.colorize(beforeFormatted);
+                }
+            }
+            case "crown", "crown_spaced" -> {
+                if (userData.getSelectedCrown() != null) {
+                    beforeFormatted = userData.getSelectedCrown().getSymbol();
+                    beforeFormatted = GradientUtils.colorize(beforeFormatted);
+                }
+            }
+            case "glowcolor" -> {
+                if (userData.getGlow() != null) {
+                    return String.valueOf(userData.getGlow().getColor());
+                } else {
+                    return "";
+                }
+            }
         }
-        return null;
+        if (beforeFormatted.length() != 0 && params.endsWith("_spaced")) beforeFormatted = beforeFormatted + " ";
+        beforeFormatted = beforeFormatted.replace("%player%", getFormattedName(player, userData));
+        return beforeFormatted;
     }
+
+    private String getFormattedName(Player player, UserData userData) {
+        String username;
+        if (userData.getSelectedNickname() != null) {
+            username = userData.getSelectedNickname().getContent();
+            if (userData.getSelectedNickname().getPaint() != null) {
+                username = userData.getSelectedNickname().getPaint().getColor().replace("%player%", username);
+            }
+        } else {
+            username = player.getName();
+        }
+        return username;
+    }
+
+    private String getTabFormatted(Player player, UserData userData) {
+        String username = getFormattedName(player, userData);
+        if (userData.getSelectedTabColor() != null && (userData.getSelectedNickname() == null || userData.getSelectedNickname().getPaint() == null)) {
+            username = userData.getSelectedTabColor().getColor().replace("%player%", username);
+        }
+        return username;
+    }
+
 }
