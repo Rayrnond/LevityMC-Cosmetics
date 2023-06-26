@@ -21,7 +21,6 @@ Chat Colors:
 
 Nickname Ticket:
  - Custom Nickname
- - Blacklist (words that cannot be used)
 
 Nickname Paint:
  - Applied to nickname tickets

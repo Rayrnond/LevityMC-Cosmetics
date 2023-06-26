@@ -41,13 +41,17 @@ public class Database {
             mysqlDataSource.setPassword(config.getDatabasePassword());
 
             dataSource = mysqlDataSource;
+            if (dataSource.getConnection() == null) {
+                throw new Exception("Failed to initialize data source, invalid details!");
+            }
             logger.info("Data source initialized successfully!");
-            getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS userdata (user_id VARCHAR(36) NOT NULL PRIMARY KEY, trade_banned BOOL, cosmetic_ids TEXT, selected_cosmetic_ids TEXT, extra_pages BIGINT, timestamp BIGINT, PRIMARY KEY (user_id));").execute();
+            getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS userdata (user_id VARCHAR(36) NOT NULL, trade_banned BOOL, cosmetic_ids TEXT, selected_cosmetic_ids TEXT, extra_pages BIGINT, timestamp BIGINT, PRIMARY KEY (user_id));").execute();
             getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS titles (user_id VARCHAR(36) NOT NULL, cosmeticId VARCHAR(100), titleId TEXT, paintId TEXT, PRIMARY KEY (cosmeticId(100)));").execute();
             getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS nicknames (user_id VARCHAR(36) NOT NULL, cosmeticId VARCHAR(100), content TEXT, paintId TEXT, PRIMARY KEY (cosmeticId(100)));").execute();
             logger.info("Completed data source clean up! Ready to proceed.");
         }catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            logger.severe("[ERROR] " + e.getLocalizedMessage());
             logger.severe("Failed to initialize data source. Check the mysql database credentials in the config.yml.");
             logger.severe("Disabling plugin");
             Bukkit.getPluginManager().disablePlugin(LevityCosmetics.getInstance());

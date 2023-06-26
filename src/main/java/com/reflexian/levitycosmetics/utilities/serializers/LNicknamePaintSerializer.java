@@ -2,7 +2,6 @@ package com.reflexian.levitycosmetics.utilities.serializers;
 
 import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.nickname.LNicknamePaint;
-import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitlePaint;
 import pl.mikigal.config.BukkitConfiguration;
 import pl.mikigal.config.serializer.Serializer;
 

@@ -2,7 +2,6 @@ package com.reflexian.levitycosmetics.commands.admin.cosmetic.subs;
 
 import com.reflexian.levitycosmetics.commands.admin.cosmetic.CosmeticParentCommand;
 import com.reflexian.levitycosmetics.data.Database;
-import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
 import com.reflexian.levitycosmetics.data.objects.user.UserData;
 import com.reflexian.levitycosmetics.data.objects.user.UserDataService;
 import com.reflexian.rapi.api.annotation.SubCommandInfo;
@@ -12,8 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @SubCommandInfo(name = "reset", command = CosmeticParentCommand.class)
 public class CosmeticResetSub implements SubCommand {

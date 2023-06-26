@@ -4,15 +4,11 @@ import com.reflexian.levitycosmetics.commands.admin.cosmetic.CosmeticParentComma
 import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
 import com.reflexian.levitycosmetics.data.objects.user.UserData;
 import com.reflexian.levitycosmetics.data.objects.user.UserDataService;
-import com.reflexian.rapi.api.annotation.CommandInfo;
 import com.reflexian.rapi.api.annotation.SubCommandInfo;
 import com.reflexian.rapi.api.command.SubCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @SubCommandInfo(name = "remove", command = CosmeticParentCommand.class)
 public class CosmeticRemoveSub implements SubCommand {

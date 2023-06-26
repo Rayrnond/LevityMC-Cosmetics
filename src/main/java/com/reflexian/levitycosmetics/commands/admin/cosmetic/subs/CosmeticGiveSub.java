@@ -10,9 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 @SubCommandInfo(name = "give", command = CosmeticParentCommand.class)
 public class CosmeticGiveSub implements SubCommand {
     @Override

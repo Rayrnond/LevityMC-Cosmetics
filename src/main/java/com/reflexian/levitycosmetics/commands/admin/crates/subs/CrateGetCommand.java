@@ -1,7 +1,6 @@
 package com.reflexian.levitycosmetics.commands.admin.crates.subs;
 
 import com.reflexian.levitycosmetics.commands.admin.crates.CrateParentCommand;
-import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
 import com.reflexian.levitycosmetics.data.objects.crates.CosmeticCrate;
 import com.reflexian.rapi.api.annotation.SubCommandInfo;
 import com.reflexian.rapi.api.command.SubCommand;

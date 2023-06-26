@@ -3,7 +3,6 @@ package com.reflexian.levitycosmetics.data.objects.cosmetics.hat;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.chatcolors.LChatColor;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.chatcolors.LTabColor;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
-import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitle;
 import com.reflexian.levitycosmetics.data.objects.user.UserData;
 import com.reflexian.levitycosmetics.data.objects.user.UserDataService;
 import de.tr7zw.changeme.nbtapi.NBTItem;
@@ -11,8 +10,6 @@ import lombok.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.units.qual.N;
-import pl.mikigal.config.annotation.ConfigOptional;
 
 import java.io.Serializable;
 

@@ -21,26 +21,23 @@ public class DropPurchaseSub implements SubCommand {
             return;
         }
         int credits = 1000; // todo get player's credits
-//        if (event.getAlreadyPurchased().contains(player.getUniqueId())) {
-//            sender.sendMessage("§cYou have already purchased this drop.");
-//            return;
-//        } else  // todo testing
-
-        if (event.getCurrentAmount() == 0 || event.getCurrentCost() == 0) {
+        UserData userData = UserDataService.shared.retrieveUserFromCache(player.getUniqueId());
+        if (event.getAlreadyPurchased().contains(player.getUniqueId())) {
+            sender.sendMessage("§cYou have already purchased this drop.");
+            return;
+        } else if (event.getCurrentAmount() == 0 || event.getCurrentCost() == 0) {
             sender.sendMessage("§cThat drop is no longer available.");
             return;
         }
-        if (credits < event.getCurrentCost()) {
+        if (userData.getCredits() < event.getCurrentCost()) {
             sender.sendMessage("§cYou do not have enough credits to purchase this drop.");
             return;
         }
-        // todo take credits from player
+        userData.removeCredits(event.getCurrentCost());
         event.getAlreadyPurchased().add(player.getUniqueId());
         event.setCurrentAmount(event.getCurrentAmount() - 1);
 
         sender.sendMessage("§aYou have purchased this drop for §e" + event.getCurrentCost() + " §acredits.");
-
-        UserData userData = UserDataService.shared.retrieveUserFromCache(player.getUniqueId());
         if (event.isCrate()) {
             player.getInventory().addItem(event.getCosmeticCrate().getItemStack());
             player.sendMessage("§aYou have been given a " + event.getCosmeticCrate().getName() + " crate.");
@@ -48,7 +45,6 @@ public class DropPurchaseSub implements SubCommand {
             event.getCosmetic().giveToUser(userData);
             player.sendMessage("§aYou have been given " + event.getCosmetic().getName() + " cosmetic.");
         }
-        return;
 
     }
 }

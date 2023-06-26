@@ -7,7 +7,7 @@ import com.reflexian.rapi.api.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@CommandInfo(name = "check")
+//@CommandInfo(name = "check")
 public class CheckCommand extends Command {
     @Override
     public boolean execute(CommandSender sender, String[] args) {

@@ -2,7 +2,6 @@ package com.reflexian.levitycosmetics.utilities.uncategorizied;
 
 import com.google.gson.Gson;
 import dev.lone.itemsadder.api.CustomStack;
-import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,11 +13,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
 
-import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**

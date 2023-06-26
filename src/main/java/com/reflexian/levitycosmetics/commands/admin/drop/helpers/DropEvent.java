@@ -69,7 +69,7 @@ public class DropEvent extends BukkitRunnable {
             priceRunnable.runTaskTimer(LevityCosmetics.getInstance(), 0, 20);
 
 
-        } else if (startingCost > 1 && currentAmount > 0) {
+        } else if (currentCost > 1 && currentAmount > 0) {
             Bukkit.broadcastMessage(format(LevityCosmetics.getInstance().getMessagesConfig().getDropOngoing()));
         }  else {
             Bukkit.broadcastMessage(format(LevityCosmetics.getInstance().getMessagesConfig().getDropEnded()));

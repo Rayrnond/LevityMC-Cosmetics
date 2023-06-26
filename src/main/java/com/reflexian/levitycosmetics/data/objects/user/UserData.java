@@ -100,7 +100,7 @@ public class UserData implements Serializable {
                 cosmetic.asHat().equipHat(player);
             }
 
-            player.sendMessage(GradientUtils.colorize(LevityCosmetics.getInstance().getMessagesConfig().getBackpackSelectMessage().replace("%cosmetic%", GradientUtils.colorize(cosmetic instanceof AssignedNickname ? ((AssignedNickname)cosmetic).getContent() : cosmetic.getName()))));
+            player.sendMessage(GradientUtils.colorize(LevityCosmetics.getInstance().getMessagesConfig().getBackpackSelectMessage().replace("%cosmetic%", GradientUtils.colorize(cosmetic instanceof AssignedNickname ? ((AssignedNickname)cosmetic).getContent() : (cosmetic instanceof AssignedTitle ? ((AssignedTitle)cosmetic).getTitle().getName() : cosmetic.getName())))));
             player.closeInventory();
         }catch (Exception exception) {
             exception.printStackTrace();
@@ -197,11 +197,11 @@ public class UserData implements Serializable {
     }
 
     public int getCredits(){
-        return 0;
+        return (int) LevityCosmetics.getInstance().getEconomy().getBalance(Bukkit.getPlayer(uuid));
     }
 
-    public void setCredits(int credits){
-
+    public void removeCredits(int credits){
+        LevityCosmetics.getInstance().getEconomy().withdrawPlayer(Bukkit.getPlayer(uuid), credits);
     }
 }
 

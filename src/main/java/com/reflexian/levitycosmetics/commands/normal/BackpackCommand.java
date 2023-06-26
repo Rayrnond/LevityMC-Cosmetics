@@ -1,7 +1,6 @@
 package com.reflexian.levitycosmetics.commands.normal;
 
 import com.reflexian.levitycosmetics.data.inventories.BackpackInventory;
-import com.reflexian.levitycosmetics.data.inventories.ChatColorInventory;
 import com.reflexian.rapi.api.annotation.CommandInfo;
 import com.reflexian.rapi.api.command.Command;
 import org.bukkit.command.CommandSender;

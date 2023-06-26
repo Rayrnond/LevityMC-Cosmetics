@@ -1,6 +1,5 @@
 package com.reflexian.levitycosmetics.utilities.serializers;
 
-import com.reflexian.levitycosmetics.utilities.uncategorizied.GradientUtils;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.ItemBuilder;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Material;

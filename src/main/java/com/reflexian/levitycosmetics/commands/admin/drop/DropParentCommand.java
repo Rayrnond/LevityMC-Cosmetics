@@ -5,12 +5,8 @@ import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
 import com.reflexian.levitycosmetics.data.objects.crates.CosmeticCrate;
 import com.reflexian.rapi.api.annotation.CommandInfo;
 import com.reflexian.rapi.api.command.Command;
-import nonapi.io.github.classgraph.utils.Assert;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 @CommandInfo(name = "drop")
 public class DropParentCommand extends Command {
@@ -27,6 +23,11 @@ public class DropParentCommand extends Command {
 
         if (args.length != 3) {
             sender.sendMessage("§cUsage: /drop <cosmetic or crate> <amount> <starting cost>");
+            return true;
+        }
+
+        if (EVENT != null) {
+            sender.sendMessage("§cThere is already a drop event running! Use /drop cancel to cancel.");
             return true;
         }
 

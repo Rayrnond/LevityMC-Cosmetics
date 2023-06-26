@@ -1,8 +1,6 @@
 package com.reflexian.levitycosmetics.commands.admin;
 
 import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
-import com.reflexian.levitycosmetics.data.objects.cosmetics.nickname.LNicknamePaint;
-import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitlePaint;
 import com.reflexian.levitycosmetics.data.objects.user.UserData;
 import com.reflexian.levitycosmetics.data.objects.user.UserDataService;
 import com.reflexian.rapi.api.annotation.CommandInfo;
@@ -10,7 +8,7 @@ import com.reflexian.rapi.api.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@CommandInfo(name = "test")
+//@CommandInfo(name = "test")
 public class TestCommand extends Command {
     @Override
     public boolean execute(CommandSender sender, String[] args) {

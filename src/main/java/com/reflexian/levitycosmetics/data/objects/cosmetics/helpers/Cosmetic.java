@@ -11,10 +11,8 @@ import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.AssignedTitle
 import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitle;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitlePaint;
 import com.reflexian.levitycosmetics.data.objects.user.UserData;
-import net.kyori.adventure.title.Title;
 import org.bukkit.inventory.ItemStack;
 
-import javax.xml.crypto.Data;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;

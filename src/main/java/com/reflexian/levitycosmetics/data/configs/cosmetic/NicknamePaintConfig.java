@@ -1,6 +1,5 @@
 package com.reflexian.levitycosmetics.data.configs.cosmetic;
 
-import com.reflexian.levitycosmetics.data.objects.cosmetics.chatcolors.LTabColor;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.nickname.LNicknamePaint;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.ItemBuilder;
 import org.bukkit.Material;

@@ -91,14 +91,14 @@
             <groupId>com.github.Rayrnond</groupId>
             <artifactId>RAPI</artifactId>
             <version>b85ffda6b6</version>
-            <scope>provided</scope>
+<!--            <scope>provided</scope>-->
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-core -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.28</version>
-            <scope>provided</scope>
+<!--            <scope>provided</scope>-->
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -111,7 +111,7 @@
             <groupId>fr.minuskube.inv</groupId>
             <artifactId>smart-invs</artifactId>
             <version>1.2.7</version>
-            <scope>provided</scope>
+<!--            <scope>provided</scope>-->
         </dependency>
 
         <dependency>

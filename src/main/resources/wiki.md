@@ -10,7 +10,7 @@ Made for Purpur / Paper 1.19.4 by Rayrnond and Alex.dev.
 - Tablist color
 - Chat color
 - Search Function
-- Drop Item Function
+- Drop Function
 - Async Database Connection
 
 
@@ -22,22 +22,23 @@ Configuration files contain the cosmetics for each server. Every cosmetic has a 
 Color codes are managed by Minimessage. See documentation at [https://docs.advntr.dev/minimessage/format.html](https://docs.advntr.dev/minimessage/format.html)
 
 
+
 ### Commands
 
-| Command                                        | Description                                                    | Permission                         |
-|------------------------------------------------|----------------------------------------------------------------|------------------------------------|
-| `/backpack`                                    | Opens the backpack GUI                                         | `levitycosmetics.backpack`         |
-| `/cosmetic give [player] [cosmeticName]`       | Gives the player a cosmetic                                    | `levitycosmetics.admin.give`       |
-| `/cosmetic remove [player] [cosmeticName]`     | Removed a cosmetic from a player                               | `levitycosmetics.admin.remove`     |
-| `/cosmetic reset [player]`                     | Reset player's cosmetics                                       | `levitycosmetics.admin.reset`      |
-| `/cosmetic list [player]`                      | List all cosmetics                                             | `levitycosmetics.admin.list`       |
-| `/nicknameticket [player]`                     | Get a nickname ticket                                          | `levitycosmetics.admin.ticket`     |
-| `/search [query]`                              | Search for a cosmetic                                          | `levitycosmetics.search`           |
-| `/drop [cosmeticName] [amount] [startingCost]` | Start a cosmetic drop                                          | `levitycosmetics.admin.drop`       |
-| `/dropcrate [crateName] [amount] [cost]`       | Start a crate drop                                             | `levitycosmetics.admin.cratedrop`  |
-| `/crate list`                                  | List all crates                                                | `levitycosmetics.admin.crate.list` |
-| `/crate get [crateName] [player]`              | Get a crate                                                    | `levitycosmetics.admin.crate.get`  |
-| `/tradeban [player]`                           | Toggle trade ban status (not implemented, missing instruction) | `levitycosmetics.admin.tradeban`   |
+| Command                                        | Description                                                     | Permission                         |
+|------------------------------------------------|-----------------------------------------------------------------|------------------------------------|
+| `/backpack`                                    | Opens the backpack GUI                                          | `levitycosmetics.backpack`         |
+| `/cosmetic give [player] [cosmeticName]`       | Gives the player a cosmetic                                     | `levitycosmetics.admin.give`       |
+| `/cosmetic remove [player] [cosmeticName]`     | Removed a cosmetic from a player                                | `levitycosmetics.admin.remove`     |
+| `/cosmetic reset [player]`                     | Reset player's cosmetics                                        | `levitycosmetics.admin.reset`      |
+| `/cosmetic list [player]`                      | List all cosmetics                                              | `levitycosmetics.admin.list`       |
+| `/nicknameticket [player]`                     | Get a nickname ticket                                           | `levitycosmetics.admin.ticket`     |
+| `/search [query]`                              | Search for a cosmetic                                           | `levitycosmetics.search`           |
+| `/drop [cosmeticName] [amount] [startingCost]` | Start a cosmetic, or crate drop. [cosmeticName] can be a crate. | `levitycosmetics.admin.drop`       |
+| `/crate list`                                  | List all crates                                                 | `levitycosmetics.admin.crate.list` |
+| `/crate get [crateName] [player]`              | Get a crate                                                     | `levitycosmetics.admin.crate.get`  |
+
+[//]: # (| `/tradeban [player]`                           | Toggle trade ban status &#40;not implemented, missing instruction&#41;  | `levitycosmetics.admin.tradeban`   |)
 
 ### Placeholders
 
@@ -52,6 +53,10 @@ Color codes are managed by Minimessage. See documentation at [https://docs.advnt
 | **NOTE**                                                                                       |                                 |                                                                                                  |
 | Some placeholders support ending with `_spaced` which adds one space if the cosmetic is valid. | $<playername> to $ <playername> |                                                                                                  |
 
+Here is an example placeholder setup I used for testing crowns, titles, and tab colors, for tablist, using placeholderapi.
+`%levitycosmetics_crown_spaced%%levitycosmetics_titlepaint_spaced%%levitycosmetics_tabcolor%`
+
+For chat, the plugin will automatically override chat messages with their chatcolor.
 
 ### Crates
 

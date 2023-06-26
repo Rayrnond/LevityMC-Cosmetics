@@ -8,7 +8,6 @@ import com.reflexian.levitycosmetics.data.objects.user.UserDataService;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.GradientUtils;
 import com.reflexian.rapi.api.annotation.Registrar;
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

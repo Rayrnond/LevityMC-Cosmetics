@@ -2,7 +2,6 @@ package com.reflexian.levitycosmetics.utilities.serializers;
 
 import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LHat;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
-import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitle;
 import pl.mikigal.config.BukkitConfiguration;
 import pl.mikigal.config.serializer.Serializer;
 

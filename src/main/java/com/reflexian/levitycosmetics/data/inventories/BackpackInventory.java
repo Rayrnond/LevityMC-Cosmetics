@@ -17,12 +17,10 @@ import com.reflexian.levitycosmetics.data.objects.user.UserDataService;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.GradientUtils;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.InvUtils;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.ItemBuilder;
-import com.reflexian.levitycosmetics.utilities.uncategorizied.LevityPlaceholders;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -130,7 +128,7 @@ public class BackpackInventory implements InventoryProvider {
                         player.sendMessage("§cYou don't have enough credits to purchase this page!");
                         return;
                     }
-                    userData.setCredits(userData.getCredits() - LevityCosmetics.getInstance().getDefaultConfig().getBackpackPrice());
+                    userData.removeCredits(LevityCosmetics.getInstance().getDefaultConfig().getBackpackPrice());
                     userData.setExtraPages(userData.getExtraPages() + 1);
                     player.sendMessage("§aYou have purchased an extra page for your backpack!");
                     showInventory(player, contents, page + 1, filtered);

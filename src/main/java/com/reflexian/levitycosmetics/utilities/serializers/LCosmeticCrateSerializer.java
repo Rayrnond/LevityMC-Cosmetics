@@ -1,10 +1,11 @@
 package com.reflexian.levitycosmetics.utilities.serializers;
 
-import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
-import com.reflexian.levitycosmetics.data.objects.cosmetics.nickname.LNicknamePaint;
 import com.reflexian.levitycosmetics.data.objects.crates.CosmeticCrate;
 import pl.mikigal.config.BukkitConfiguration;
 import pl.mikigal.config.serializer.Serializer;
+import pl.mikigal.config.serializer.Serializers;
+
+import java.util.List;
 
 public class LCosmeticCrateSerializer extends Serializer<CosmeticCrate> {
 
@@ -18,10 +19,11 @@ public class LCosmeticCrateSerializer extends Serializer<CosmeticCrate> {
     @Override
     public CosmeticCrate deserialize(String s, BukkitConfiguration bukkitConfiguration) {
 
+
         CosmeticCrate crate = new CosmeticCrate(
                 bukkitConfiguration.getString(s + ".name"),
                 new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration),
-                bukkitConfiguration.getStringList(s + ".cosmetics")
+                Serializers.of(List.class).deserialize(s + ".cosmetics", bukkitConfiguration)
         );
         CosmeticCrate.CRATES.put(crate.getName(), crate);
         return crate;

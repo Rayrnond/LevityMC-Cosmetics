@@ -17,8 +17,10 @@ import com.reflexian.levitycosmetics.utilities.uncategorizied.LevityPlaceholders
 import com.reflexian.rapi.RAPI;
 import fr.minuskube.inv.InventoryManager;
 import lombok.Getter;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import pl.mikigal.config.ConfigAPI;
 import pl.mikigal.config.style.CommentStyle;
@@ -29,6 +31,7 @@ public final class LevityCosmetics extends JavaPlugin {
 
     @Getter private static LevityCosmetics instance;
 
+    private Economy economy;
     private DefaultConfig defaultConfig;
     private MessagesConfig messagesConfig;
 
@@ -38,6 +41,11 @@ public final class LevityCosmetics extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
+        if (!setupEconomy()) {
+            getLogger().severe("Disabled due to no Vault dependency found!");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         ConfigAPI.registerSerializer(ItemStack.class, new ItemStackSerializer());
         ConfigAPI.registerSerializer(LChatColor.class, new LChatColorSerializer());
@@ -65,6 +73,18 @@ public final class LevityCosmetics extends JavaPlugin {
         Bukkit.getScheduler().runTaskAsynchronously(this, Database.shared::initializeDataSource);
 
 
+    }
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        economy = rsp.getProvider();
+        return true;
     }
 
     @Override

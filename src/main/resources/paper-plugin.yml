@@ -11,6 +11,6 @@ dependencies:
     bootstrap: false
 authors: [Raymond, Whale]
 website: reflexian.com
-loader: com.reflexian.levitycosmetics.CosmeticsPluginLoader
+#loader: com.reflexian.levitycosmetics.CosmeticsPluginLoader
 
 # %abysseconomy_<currency>_raw% - returns the raw balance of the player

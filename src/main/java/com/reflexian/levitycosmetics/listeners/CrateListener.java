@@ -3,11 +3,14 @@ package com.reflexian.levitycosmetics.listeners;
 import com.reflexian.levitycosmetics.data.objects.crates.CosmeticCrate;
 import com.reflexian.rapi.api.annotation.Registrar;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import java.util.stream.Collectors;
 
 @Registrar
 public class CrateListener implements Listener {

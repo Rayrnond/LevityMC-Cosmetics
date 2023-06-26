@@ -2,11 +2,9 @@ package com.reflexian.levitycosmetics.data.objects.cosmetics.nickname;
 
 import com.reflexian.levitycosmetics.LevityCosmetics;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
-import com.reflexian.levitycosmetics.utilities.uncategorizied.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
