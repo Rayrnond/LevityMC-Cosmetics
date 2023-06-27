@@ -1,10 +1,13 @@
 package com.reflexian.levitycosmetics.data.objects.cosmetics.nickname;
 
 import com.reflexian.levitycosmetics.LevityCosmetics;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.CosmeticType;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
+import com.reflexian.levitycosmetics.utilities.uncategorizied.GradientUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -18,7 +21,7 @@ public class AssignedNickname extends Cosmetic{
 
     private UUID uuid;
     private String cosmeticId = "";
-    private String content;
+    @Setter private String content;
     @Nullable
     private LNicknamePaint paint=null;
     private transient String paintId = ""; // failover if paint is null
@@ -50,14 +53,20 @@ public class AssignedNickname extends Cosmetic{
     public String toSQL() {
         // insert, update if exists
         return "INSERT INTO `nicknames` (`user_id`, `cosmeticId`, `content`, `paintId`) VALUES ('" + uuid.toString() + "', '" + cosmeticId + "', '"  + content + "', '" + paintId + "') ON DUPLICATE KEY UPDATE `content` = '" + content + "', `paintId` = '" + paintId + "';";
-
     }
 
     @Override
     public ItemStack getItemStack() {
         ItemStack itemstack = LevityCosmetics.getInstance().getDefaultConfig().getNicknameCosmeticBackpackItem().clone();
         ItemMeta meta = itemstack.getItemMeta();
-        meta.setDisplayName(meta.getDisplayName().replace("%nickname%", content));
+
+        String name = content;
+        if (!content.isEmpty() && paint != null) {
+            name = paint.getColor().replace("%player%", content);
+            name = GradientUtils.colorize(name);
+        }
+
+        meta.setDisplayName(meta.getDisplayName().replace("%nickname%", (content.isEmpty() ? "Click to set a nickname" : name)));
         itemstack.setItemMeta(meta);
         return itemstack;
     }
@@ -65,5 +74,10 @@ public class AssignedNickname extends Cosmetic{
     @Override
     public String getName() {
         return cosmeticId;
+    }
+
+    @Override
+    public CosmeticType getType() {
+        return CosmeticType.ASSIGNED_NICKNAME;
     }
 }

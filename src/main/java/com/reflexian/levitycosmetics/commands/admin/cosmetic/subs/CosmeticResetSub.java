@@ -36,7 +36,10 @@ public class CosmeticResetSub implements SubCommand {
         UserDataService.shared.save(userData, e->{});
 
         try {
+            Database.shared.getConnection().prepareStatement("DELETE FROM `playercosmetics` WHERE `user_id` = '" + target.getUniqueId().toString() + "';").executeUpdate();
+            Database.shared.getConnection().prepareStatement("DELETE FROM `userdata` WHERE `user_id` = '" + target.getUniqueId().toString() + "';").executeUpdate();
             Database.shared.getConnection().prepareStatement("DELETE FROM `titles` WHERE `user_id` = '" + target.getUniqueId().toString() + "';").executeUpdate();
+            Database.shared.getConnection().prepareStatement("DELETE FROM `hats` WHERE `user_id` = '" + target.getUniqueId().toString() + "';").executeUpdate();
             Database.shared.getConnection().prepareStatement("DELETE FROM `nicknames` WHERE `user_id` = '" + target.getUniqueId().toString() + "';").executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

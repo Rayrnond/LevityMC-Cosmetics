@@ -1,5 +1,6 @@
 package com.reflexian.levitycosmetics.data.objects.user;
 
+import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.AssignedHat;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.nickname.AssignedNickname;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.AssignedTitle;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.Callback;
@@ -21,27 +22,54 @@ public class UserDataService extends DataService {
     protected final Map<UUID,UserData> cachedUserData = new HashMap<>();
 
     public void save(UserData userData, Callback<Boolean> success) {
-        CompletableFuture.runAsync(()->{
-            try (Connection connection = getDatabase().getConnection();
-                 PreparedStatement statement = connection.prepareStatement("INSERT INTO `userdata` (`user_id`, `cosmetic_ids`, `selected_cosmetic_ids`, `extra_pages`, `trade_banned`, `timestamp`) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `cosmetic_ids` = ?, `selected_cosmetic_ids` = ?, `extra_pages` = ?, `trade_banned` = ?, `timestamp` = ?")) {
-                statement.setString(1, userData.getUuid().toString());
-                statement.setString(2, String.join(";", userData.getDatabaseCosmeticIds()));
-                statement.setString(3, String.join(";", userData.getDatabaseSelectedIds()));
-                statement.setInt(4, userData.getExtraPages());
-                statement.setBoolean(5, userData.isTradeBanned());
-                statement.setLong(6, userData.getTimestamp());
-                statement.setString(7, String.join(";", userData.getDatabaseCosmeticIds()));
-                statement.setString(8, String.join(";", userData.getDatabaseSelectedIds()));
-                statement.setInt(9, userData.getExtraPages());
-                statement.setBoolean(10, userData.isTradeBanned());
-                statement.setLong(11, userData.getTimestamp());
-                statement.executeUpdate();
-                success.execute(true);
+        CompletableFuture.runAsync(() -> {
+            try (Connection connection = getDatabase().getConnection()) {
+                String upsertQuery = "INSERT INTO `userdata` (`user_id`, `extra_pages`, `trade_banned`, `timestamp`) " +
+                        "VALUES (?, ?, ?, ?) " +
+                        "ON DUPLICATE KEY UPDATE `extra_pages` = VALUES(`extra_pages`), " +
+                        "`trade_banned` = VALUES(`trade_banned`), `timestamp` = VALUES(`timestamp`)";
+
+                try (PreparedStatement statement = connection.prepareStatement(upsertQuery)) {
+                    statement.setString(1, userData.getUuid().toString());
+                    statement.setInt(2, userData.getExtraPages());
+                    statement.setBoolean(3, userData.isTradeBanned());
+                    statement.setLong(4, userData.getTimestamp());
+                    statement.executeUpdate();
+                }
+
+                String deleteQuery = "DELETE FROM `playercosmetics` WHERE `user_id` = ?";
+
+                try (PreparedStatement statement = connection.prepareStatement(deleteQuery)) {
+                    statement.setString(1, userData.getUuid().toString());
+                    statement.executeUpdate();
+                }
+
+                String insertQuery = "INSERT INTO `playercosmetics` (user_id, localCosmeticId, playerCosmeticId, cosmeticType, selected) " +
+                        "VALUES (?, ?, ?, ?, ?)";
+
+                try (PreparedStatement statement = connection.prepareStatement(insertQuery)) {
+                    connection.setAutoCommit(false);
+
+                    for (UserCosmetic userCosmetic : userData.getUserCosmetics()) {
+                        statement.setString(1, userData.getUuid().toString());
+                        statement.setString(2, userCosmetic.getLocalCosmeticId());
+                        statement.setString(3, userCosmetic.getPlayerCosmeticId());
+                        statement.setInt(4, userCosmetic.getCosmeticType().getIdentifier());
+                        statement.setBoolean(5, userCosmetic.isSelected());
+                        statement.addBatch();
+                    }
+
+                    statement.executeBatch();
+                    connection.commit();
+                    success.execute(true);
+                }
+
             } catch (SQLException e) {
                 e.printStackTrace();
                 success.execute(false);
             }
         });
+
     }
 
     public void revokeCache(UUID uuid) {
@@ -58,12 +86,12 @@ public class UserDataService extends DataService {
 
     public void retrieveUserFromUUID(UUID uuid, Callback<UserData> user) {
         CompletableFuture.runAsync(()->{
-            try (Connection connection = getDatabase().getConnection();
-                 PreparedStatement statement = connection.prepareStatement("SELECT * FROM `userdata` WHERE `user_id` = ?")) {
+            try (Connection connection = getDatabase().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM `userdata` WHERE `user_id` = ?"); PreparedStatement dataStatement = connection.prepareStatement("SELECT * FROM `playercosmetics` WHERE `user_id` = ?")) {
                 statement.setString(1, uuid.toString());
-                try (ResultSet resultSet = statement.executeQuery()) {
+                dataStatement.setString(1, uuid.toString());
+                try (ResultSet resultSet = statement.executeQuery(); ResultSet dataResultSet = dataStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        final UserData userData = UserData.fromResultSet(resultSet);
+                        final UserData userData = UserData.fromResultSet(resultSet, dataResultSet);
                         queryNicknames(uuid, nicknames -> {
                             if (nicknames != null) {
                                 UserData u = retrieveUserFromCache(uuid);
@@ -89,6 +117,20 @@ public class UserDataService extends DataService {
                                     selectedNickname.ifPresent(u::setSelectedTitle);
                                 }
                                 u.setAssignedTitles(titles);
+                            }
+                        });
+
+                        queryHats(uuid, hats -> {
+                            if (hats != null) {
+                                UserData u = retrieveUserFromCache(uuid);
+                                String potentialSelectedHatId = u.getPotentialSelectedHatId();
+                                if (!potentialSelectedHatId.isEmpty()) {
+                                    Optional<AssignedHat> selectedNickname = hats.stream()
+                                            .filter(e -> e.getCosmeticId().equals(potentialSelectedHatId))
+                                            .findFirst();
+                                    selectedNickname.ifPresent(u::setSelectedHat);
+                                }
+                                u.setAssignedHats(hats);
                             }
                         });
                         user.execute(userData);
@@ -148,4 +190,27 @@ public class UserDataService extends DataService {
             }
         });
     }
+
+    public void queryHats(UUID uuid, Callback<HashSet<AssignedHat>> hats) {
+        CompletableFuture.runAsync(()->{
+            try (Connection connection = getDatabase().getConnection();
+                 PreparedStatement statement = connection.prepareStatement("SELECT * FROM `hats` WHERE `user_id` = ?")) {
+                statement.setString(1, uuid.toString());
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    HashSet<AssignedHat> a = new HashSet<>();
+                    while (resultSet.next()) {
+                        a.add(AssignedHat.fromResultSet(resultSet));
+                    }
+                    hats.execute(a);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    hats.execute(null);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                hats.execute(null);
+            }
+        });
+    }
+
 }

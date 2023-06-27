@@ -10,10 +10,10 @@ public class LHatSerializer extends Serializer<LHat> {
     @Override
     protected void saveObject(String s, LHat lHat, BukkitConfiguration bukkitConfiguration) {
         bukkitConfiguration.set(s + ".name", lHat.getName());
-        bukkitConfiguration.set(s + ".chatcolor", lHat.getChatColor());
-        bukkitConfiguration.set(s + ".tabcolor", lHat.getTabColor());
-        bukkitConfiguration.set(s + ".glow", lHat.getGlow());
-        bukkitConfiguration.set(s + ".crown", lHat.getCrown());
+        bukkitConfiguration.set(s + ".chatcolorChance", lHat.getChatcolorChance());
+        bukkitConfiguration.set(s + ".tabcolorChance", lHat.getTabcolorChance());
+        bukkitConfiguration.set(s + ".glowChance", lHat.getGlowChance());
+        bukkitConfiguration.set(s + ".crownChance", lHat.getCrownChance());
         bukkitConfiguration.set(s + ".helmet", lHat.getHelmet());
         bukkitConfiguration.set(s + ".itemstack", lHat.getItemStack());
     }
@@ -21,17 +21,23 @@ public class LHatSerializer extends Serializer<LHat> {
     @Override
     public LHat deserialize(String s, BukkitConfiguration bukkitConfiguration) {
 
-        LHat hat = new LHat(
-                bukkitConfiguration.getString(s + ".name"),
-                bukkitConfiguration.getString(s + ".chatcolor"),
-                bukkitConfiguration.getString(s + ".tabcolor"),
-                bukkitConfiguration.getString(s + ".glow"),
-                bukkitConfiguration.getString(s + ".crown"),
-                new ItemStackSerializer().deserialize(s + ".helmet", bukkitConfiguration),
-                new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
-        );
+        try {
+            LHat hat = new LHat(
+                    bukkitConfiguration.getString(s + ".name"),
+                    bukkitConfiguration.getInt(s + ".chatcolorChance"),
+                    bukkitConfiguration.getInt(s + ".tabcolorChance"),
+                    bukkitConfiguration.getInt(s + ".glowChance"),
+                    bukkitConfiguration.getInt(s + ".crownChance"),
+                    new ItemStackSerializer().deserialize(s + ".helmet", bukkitConfiguration),
+                    new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
+            );
 
-        Cosmetic.addCosmetic(hat);
-        return hat;
+            Cosmetic.addCosmetic(hat);
+            return hat;
+        }catch (Exception e) {
+            System.out.println("Failed to load hat cosmetic: " + s);
+            e.printStackTrace();
+            return null;
+        }
     }
 }

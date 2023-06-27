@@ -20,8 +20,9 @@ public class HatListener implements Listener {
         if (e.getOldItem() != null && !e.getOldItem().getType().equals(Material.AIR)) {
             NBTItem nbtItem = new NBTItem(e.getOldItem());
             if (nbtItem.hasKey("levitycosmeticshelmet")) {
-                e.getOldItem().setAmount(0);
                 UserData userData = UserDataService.shared.retrieveUserFromCache(e.getPlayer().getUniqueId());
+                if (userData.getSelectedHat() == null) return;
+                e.getOldItem().setAmount(0);
                 userData.getSelectedHat().unequipHat(userData);
                 e.getPlayer().sendMessage("§cYou have unequipped your hat.");
             }
@@ -46,8 +47,9 @@ public class HatListener implements Listener {
             NBTItem nbtItem = new NBTItem(itemStack);
             if (nbtItem.hasKey("levitycosmeticshelmet")) {
                 event.setCancelled(true);
-                itemStack.setAmount(0);
                 UserData userData = UserDataService.shared.retrieveUserFromCache(event.getWhoClicked().getUniqueId());
+                if (userData.getSelectedHat() == null) return;
+                itemStack.setAmount(0);
                 userData.getSelectedHat().unequipHat(userData);
                 event.getWhoClicked().sendMessage("§cYou have unequipped your hat.");
             }

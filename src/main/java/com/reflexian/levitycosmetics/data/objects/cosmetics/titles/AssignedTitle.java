@@ -1,11 +1,15 @@
 package com.reflexian.levitycosmetics.data.objects.cosmetics.titles;
 
+import com.reflexian.levitycosmetics.LevityCosmetics;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.CosmeticType;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
+import com.reflexian.levitycosmetics.utilities.uncategorizied.GradientUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,6 +41,7 @@ public class AssignedTitle extends Cosmetic {
         return "INSERT INTO `titles` (`user_id`, `cosmeticId`, `titleId`, `paintId`) VALUES ('" + uuid.toString() + "', '" + cosmeticId + "', '" + title.getName() + "', '" + (paint == null ? "" : paint.getName()) + "') ON DUPLICATE KEY UPDATE `titleId` = '" + title.getName() + "', `paintId` = '" + (paint == null ? "" : paint.getName()) + "';";
     }
 
+    
 
     @Override
     public ItemStack getItemStack() {
@@ -46,5 +51,10 @@ public class AssignedTitle extends Cosmetic {
     @Override
     public String getName() {
         return cosmeticId;
+    }
+
+    @Override
+    public CosmeticType getType() {
+        return CosmeticType.ASSIGNED_TITLE;
     }
 }

@@ -17,12 +17,19 @@ public class LTitleSerializer extends Serializer<LTitle> {
     @Override
     public LTitle deserialize(String s, BukkitConfiguration bukkitConfiguration) {
 
-        LTitle title = new LTitle(
-                bukkitConfiguration.getString(s + ".name"),
-                bukkitConfiguration.getString(s + ".tag"),
-                new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
-        );
-        Cosmetic.addCosmetic(title);
-        return title;
+        try {
+            LTitle title = new LTitle(
+                    bukkitConfiguration.getString(s + ".name"),
+                    bukkitConfiguration.getString(s + ".tag"),
+                    new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
+            );
+            Cosmetic.addCosmetic(title);
+            return title;
+        }catch (Exception e) {
+            System.out.println("Failed to load title cosmetic: " + s);
+            e.printStackTrace();
+            return null;
+        }
+
     }
 }

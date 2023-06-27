@@ -9,6 +9,9 @@ import pl.mikigal.config.annotation.Comment;
 import pl.mikigal.config.annotation.ConfigName;
 import pl.mikigal.config.annotation.ConfigPath;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @ConfigName("gui.yml")
 public interface GUIConfig extends Config {
 
@@ -17,6 +20,19 @@ public interface GUIConfig extends Config {
     @Comment("Shown in the backpack GUI as the title.")
     default String getBackpackTitle() {
         return "<gradient:#F9C58D:#F492F0>My Backpack</gradient>";
+    }
+
+
+    @Comment("Additional lore in drop menu.")
+    @ConfigPath("gui.drop.lore")
+    default List<String> getDropItemLore() {
+        List<String> itemBuilder = new ArrayList<>();
+        itemBuilder.add("<color:gray>Current Cost: %cost% credits");
+        itemBuilder.add("<color:gray>Amount in stock: x%stock%");
+        itemBuilder.add("<color:gray>Cosmetic: %cosmetic%");
+        itemBuilder.add(" ");
+        itemBuilder.add("<color:gray>Click to purchase!");
+        return itemBuilder;
     }
 
     @Comment("Shown in the backpack GUI as the go to next page button.")

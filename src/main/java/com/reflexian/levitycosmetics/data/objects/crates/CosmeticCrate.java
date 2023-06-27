@@ -26,20 +26,22 @@ public class CosmeticCrate implements Serializable {
     private List<String> potentialCosmetics;
 
     public boolean roll(Player player) {
-        final UserData userData = UserDataService.shared.retrieveUserFromCache(player.getUniqueId());
+        try {
+            final UserData userData = UserDataService.shared.retrieveUserFromCache(player.getUniqueId());
 
-        Collections.shuffle(potentialCosmetics);
-        final Cosmetic cosmetic = potentialCosmetics.stream().map(Cosmetic::getCosmetic).filter(c -> !userData.getAllCosmetics().contains(c)).findFirst().orElse(null);
-        if (cosmetic == null) {
-            player.sendMessage("§cYou own all cosmetics this crate offers!");
+            Collections.shuffle(potentialCosmetics);
+            final Cosmetic cosmetic = Cosmetic.getCosmetic(potentialCosmetics.get(0));
+
+            cosmetic.giveToUser(userData);
+
+            player.getInventory().setItemInMainHand(player.getInventory().getItemInMainHand().asQuantity(player.getInventory().getItemInMainHand().getAmount()-1));
+            player.sendMessage("§bYou have received the §f"+cosmetic.getName()+"§b cosmetic!");
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            player.sendMessage("§cAn error occurred while trying to give you a cosmetic!");
             return false;
         }
-
-        cosmetic.giveToUser(userData);
-
-        player.getInventory().setItemInMainHand(player.getInventory().getItemInMainHand().asQuantity(player.getInventory().getItemInMainHand().getAmount()-1));
-        player.sendMessage("§bYou have received the §f"+cosmetic.getName()+"§b cosmetic!");
-        return true;
     }
 
     public ItemStack getItemStack() {

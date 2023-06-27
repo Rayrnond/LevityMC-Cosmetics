@@ -1,8 +1,10 @@
 package com.reflexian.levitycosmetics.data.objects.user;
 
 import com.reflexian.levitycosmetics.LevityCosmetics;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.CosmeticType;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.chatcolors.LChatColor;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.chatcolors.LTabColor;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.AssignedHat;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LCrown;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LGlow;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LHat;
@@ -30,23 +32,25 @@ public class UserData implements Serializable {
         this.uuid = uuid;
     }
 
-    private HashSet<String> unknownCosmetics = new HashSet<>();
-
-    private final HashSet<Cosmetic> allCosmetics = new HashSet<>();
+    private final HashSet<UserCosmetic> userCosmetics = new HashSet<>();
+    private final HashSet<UserCosmetic> selectedCosmetics = new HashSet<>();
+//    private final HashSet<Cosmetic> allCosmetics = new HashSet<>();
 
     @Setter private HashSet<AssignedNickname> assignedNicknames = new HashSet<>();
     @Setter private HashSet<AssignedTitle> assignedTitles = new HashSet<>();
+    @Setter private HashSet<AssignedHat> assignedHats = new HashSet<>();
 
     @Setter private transient LChatColor selectedChatColor=null;
     @Setter private transient LTabColor selectedTabColor = null;
-    @Setter private transient LHat selectedHat=null;
     @Setter private transient LGlow selectedGlow=null;
     @Setter private transient LCrown selectedCrown=null;
+    @Setter private transient AssignedHat selectedHat=null;
     @Setter private transient AssignedTitle selectedTitle=null;
     @Setter private transient AssignedNickname selectedNickname=null;
 
     private String potentialSelectedNicknameId = "";
     private String potentialSelectedTitleId = "";
+    private String potentialSelectedHatId = "";
 
     @Setter private int extraPages = 0;
     @Setter private boolean tradeBanned=false;
@@ -57,6 +61,9 @@ public class UserData implements Serializable {
     public void reset() {
         selectedChatColor = null;
         selectedTabColor = null;
+        if (selectedHat != null) {
+            Bukkit.getPlayer(uuid).getInventory().setHelmet(null);
+        }
         selectedHat = null;
         selectedGlow = null;
         selectedCrown = null;
@@ -65,17 +72,27 @@ public class UserData implements Serializable {
         extraPages = 0;
         tradeBanned = false;
         timestamp = System.currentTimeMillis();
-        allCosmetics.clear();
+//        allCosmetics.clear();
         assignedNicknames.clear();
         assignedTitles.clear();
-        unknownCosmetics.clear();
+        userCosmetics.clear();
+        selectedCosmetics.clear();
         if (glow != null) {
             glow.destroy();
         }
     }
 
+    public void equip(UserCosmetic userCosmetic) {
+        selectedCosmetics.add(userCosmetic);
+        equip(userCosmetic.getCosmetic());
+    }
     public void equip(Cosmetic cosmetic) {
         final Player player = Bukkit.getPlayer(uuid);
+        for (UserCosmetic selectedCosmetic : selectedCosmetics) {
+            if (selectedCosmetic.getCosmeticType() == cosmetic.getType()) {
+                selectedCosmetic.setSelected(false);
+            }
+        }
         try {
             if (cosmetic instanceof LChatColor)
                 setSelectedChatColor(cosmetic.asChatColor());
@@ -96,11 +113,12 @@ public class UserData implements Serializable {
                 setSelectedNickname((AssignedNickname) cosmetic);
             } else if (cosmetic instanceof AssignedTitle) {
                 setSelectedTitle((AssignedTitle) cosmetic);
-            } else if (cosmetic instanceof LHat) {
+            } else if (cosmetic instanceof AssignedHat) {
                 cosmetic.asHat().equipHat(player);
             }
 
-            player.sendMessage(GradientUtils.colorize(LevityCosmetics.getInstance().getMessagesConfig().getBackpackSelectMessage().replace("%cosmetic%", GradientUtils.colorize(cosmetic instanceof AssignedNickname ? ((AssignedNickname)cosmetic).getContent() : (cosmetic instanceof AssignedTitle ? ((AssignedTitle)cosmetic).getTitle().getName() : cosmetic.getName())))));
+            String name = cosmetic instanceof AssignedNickname ? ((AssignedNickname)cosmetic).getContent() : (cosmetic instanceof AssignedTitle ? ((AssignedTitle)cosmetic).getTitle().getName() : (cosmetic instanceof AssignedHat ? (((AssignedHat) cosmetic).getLHat()).getName() : cosmetic.getName()));
+            player.sendMessage(GradientUtils.colorize(LevityCosmetics.getInstance().getMessagesConfig().getBackpackSelectMessage().replace("%cosmetic%", GradientUtils.colorize(name))));
             player.closeInventory();
         }catch (Exception exception) {
             exception.printStackTrace();
@@ -108,40 +126,70 @@ public class UserData implements Serializable {
         }
     }
 
-    public Set<Cosmetic> getAllCosmetics() {
-        return allCosmetics;
+    public void unequip(Cosmetic cosmetic) {
+        final Player player = Bukkit.getPlayer(uuid);
+        for (UserCosmetic selectedCosmetic : selectedCosmetics) {
+            if (selectedCosmetic.getCosmeticType() == cosmetic.getType()) {
+                selectedCosmetic.setSelected(false);
+            }
+        }
+        try {
+            if (cosmetic instanceof LChatColor)
+                setSelectedChatColor(null);
+            else if (cosmetic instanceof LCrown)
+                setSelectedCrown(null);
+            else if (cosmetic instanceof LTabColor)
+                setSelectedTabColor(null);
+            else if (cosmetic instanceof LGlow) {
+                if (glow != null) {
+                    glow.destroy();
+                }
+                setSelectedGlow(null);
+            } else if (cosmetic instanceof AssignedNickname) {
+                setSelectedNickname(null);
+            } else if (cosmetic instanceof AssignedTitle) {
+                setSelectedTitle(null);
+            } else if (cosmetic instanceof AssignedHat) {
+                cosmetic.asHat().unequipHat(this);
+            }
+
+            String name = cosmetic instanceof AssignedNickname ? ((AssignedNickname)cosmetic).getContent() : (cosmetic instanceof AssignedTitle ? ((AssignedTitle)cosmetic).getTitle().getName() : (cosmetic instanceof AssignedHat ? (((AssignedHat) cosmetic).getLHat()).getName() : cosmetic.getName()));
+            player.sendMessage(GradientUtils.colorize(LevityCosmetics.getInstance().getMessagesConfig().getBackpackUnselectMessage().replace("%cosmetic%", GradientUtils.colorize(name))));
+            player.closeInventory();
+        }catch (Exception exception) {
+            exception.printStackTrace();
+            player.sendMessage("§cAn error occurred while unequiping this cosmetic. Please contact an administrator.");
+        }
     }
 
-    public static UserData fromResultSet(ResultSet resultSet) throws SQLException {
+    public static UserData fromResultSet(ResultSet playerResult, ResultSet dataResult) throws SQLException {
 
         final UserData userData = new UserData(UUID.randomUUID());
-        userData.uuid = UUID.fromString(resultSet.getString("user_id"));
+        userData.uuid = UUID.fromString(playerResult.getString("user_id"));
 
-        userData.unknownCosmetics = new HashSet<>(Set.of(resultSet.getString("cosmetic_ids").split(";")));
-        for (String unknownCosmetic : userData.getUnknownCosmetics()) {
-            Cosmetic cosmetic = Cosmetic.getCosmetic(unknownCosmetic);
-            if (cosmetic == null) continue;
-            userData.getAllCosmetics().add(cosmetic);
+        while (dataResult.next()) {
+            UserCosmetic userCosmetic = new UserCosmetic(userData.uuid, dataResult.getString("localCosmeticId"), dataResult.getString("playerCosmeticId"), CosmeticType.fromIdentifier(dataResult.getInt("cosmeticType")));
+            userCosmetic.setSelected(dataResult.getBoolean("selected"));
+            userData.userCosmetics.add(userCosmetic);
         }
 
+        List<UserCosmetic> selectedCosmeticIds = userData.getUserCosmetics().stream().filter(UserCosmetic::isSelected).toList();
 
-
-        List<String> selectedCosmeticIds = new ArrayList<>(List.of(resultSet.getString("selected_cosmetic_ids").split(";")));
-
-        for (String selectedCosmeticId : selectedCosmeticIds) {
-            if (selectedCosmeticId.startsWith("nickname%")) {
-                userData.potentialSelectedNicknameId = selectedCosmeticId.replace("nickname%", "");
+        for (UserCosmetic selectedCosmetic : selectedCosmeticIds) {
+            if (selectedCosmetic.getCosmeticType() == CosmeticType.ASSIGNED_NICKNAME) {
+                userData.potentialSelectedNicknameId = selectedCosmetic.getLocalCosmeticId();
                 continue;
-            } else if (selectedCosmeticId.startsWith("title%")) {
-                userData.potentialSelectedTitleId = selectedCosmeticId.replace("title%", "");
+            } else if (selectedCosmetic.getCosmeticType() == CosmeticType.ASSIGNED_TITLE) {
+                userData.potentialSelectedTitleId = selectedCosmetic.getLocalCosmeticId();
+                continue;
+            } else if (selectedCosmetic.getCosmeticType() == CosmeticType.ASSIGNED_HAT) {
+                userData.potentialSelectedHatId = selectedCosmetic.getLocalCosmeticId();
                 continue;
             }
-            Cosmetic cosmetic = Cosmetic.getCosmetic(selectedCosmeticId);
+            Cosmetic cosmetic = selectedCosmetic.getCosmetic();
             if (cosmetic == null) continue;
             if (cosmetic instanceof LChatColor lChatColor) {
                 userData.selectedChatColor = lChatColor;
-            } else if (cosmetic instanceof LHat lHat) {
-                userData.selectedHat = lHat;
             } else if (cosmetic instanceof LGlow lGlow) {
                 userData.selectedGlow = lGlow;
                 if (userData.glow != null) userData.glow.destroy();
@@ -156,44 +204,10 @@ public class UserData implements Serializable {
             }
         }
 
-        userData.extraPages = resultSet.getInt("extra_pages");
-        userData.timestamp = resultSet.getLong("timestamp");
-        userData.tradeBanned = resultSet.getBoolean("trade_banned");
+        userData.extraPages = playerResult.getInt("extra_pages");
+        userData.timestamp = playerResult.getLong("timestamp");
+        userData.tradeBanned = playerResult.getBoolean("trade_banned");
         return userData;
-    }
-
-
-    public Set<String> getDatabaseCosmeticIds() {
-        Set<String> cosmeticIds = new HashSet<>();
-        for (Cosmetic cosmetic : getAllCosmetics()) {
-            cosmeticIds.add(cosmetic.getName());
-        }
-        cosmeticIds.addAll(getUnknownCosmetics());
-
-        return cosmeticIds;
-    }
-
-    public Set<String> getDatabaseSelectedIds() {
-        Set<String> cosmeticIds = new HashSet<>();
-        if (selectedChatColor != null) cosmeticIds.add(selectedChatColor.getName());
-        if (selectedHat != null) cosmeticIds.add(selectedHat.getName());
-        if (selectedTitle != null) cosmeticIds.add(selectedTitle.getTitle().getName());
-        if (selectedGlow != null) cosmeticIds.add(selectedGlow.getName());
-        if (selectedTabColor != null) cosmeticIds.add(selectedTabColor.getName());
-        if (selectedCrown != null) cosmeticIds.add(selectedCrown.getName());
-        if (selectedNickname != null)  {
-            cosmeticIds.add("nickname%" + selectedNickname.getCosmeticId());
-            if (selectedNickname.getPaint() != null) {
-                cosmeticIds.add(selectedNickname.getPaint().getName());
-            }
-        }
-        if (selectedTitle != null) {
-            cosmeticIds.add("title%" + selectedTitle.getCosmeticId());
-            if (selectedTitle.getPaint() != null) {
-                cosmeticIds.add(selectedTitle.getPaint().getName());
-            }
-        }
-        return cosmeticIds;
     }
 
     public int getCredits(){

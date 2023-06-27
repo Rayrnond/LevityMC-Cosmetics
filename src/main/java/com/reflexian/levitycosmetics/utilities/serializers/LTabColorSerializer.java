@@ -17,12 +17,18 @@ public class LTabColorSerializer extends Serializer<LTabColor> {
     @Override
     public LTabColor deserialize(String s, BukkitConfiguration bukkitConfiguration) {
 
-        LTabColor tabColor = new LTabColor(
-                bukkitConfiguration.getString(s + ".name"),
-                bukkitConfiguration.getString(s + ".color"),
-                new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
-        );
-        Cosmetic.addCosmetic(tabColor);
-        return tabColor;
+        try {
+            LTabColor tabColor = new LTabColor(
+                    bukkitConfiguration.getString(s + ".name"),
+                    bukkitConfiguration.getString(s + ".color"),
+                    new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
+            );
+            Cosmetic.addCosmetic(tabColor);
+            return tabColor;
+        }catch (Exception e) {
+            System.out.println("Failed to load tab color cosmetic: " + s);
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -3,8 +3,10 @@ package com.reflexian.levitycosmetics.commands.normal;
 import com.reflexian.levitycosmetics.LevityCosmetics;
 import com.reflexian.levitycosmetics.data.configs.ConfigurationLoader;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
+import com.reflexian.levitycosmetics.data.objects.user.UserCosmetic;
 import com.reflexian.levitycosmetics.data.objects.user.UserData;
 import com.reflexian.levitycosmetics.data.objects.user.UserDataService;
+import com.reflexian.levitycosmetics.utilities.uncategorizied.GradientUtils;
 import com.reflexian.rapi.api.annotation.CommandInfo;
 import com.reflexian.rapi.api.command.Command;
 import fr.minuskube.inv.ClickableItem;
@@ -30,22 +32,22 @@ public class SearchCommand extends Command {
             return true;
         }
         final UserData data = UserDataService.shared.retrieveUserFromCache(((Player) sender).getUniqueId());
-        Set<Cosmetic> cosmeticList = data.getAllCosmetics();
+        Set<UserCosmetic> cosmeticList = data.getUserCosmetics();
         if (args.length == 0) {
             sender.sendMessage("Please specify a cosmetic to search for.");
             return true;
         }
 
         String search = String.join(" ", args);
-        cosmeticList = cosmeticList.stream().filter(cosmetic -> cosmetic.getName().toLowerCase().contains(search.toLowerCase())).collect(Collectors.toSet());
+        cosmeticList = cosmeticList.stream().filter(cosmetic -> (GradientUtils.stripColor(cosmetic.getCosmetic().getName().toLowerCase())).contains(search.toLowerCase())).collect(Collectors.toSet());
 
-        Set<Cosmetic> finalCosmeticList = cosmeticList;
+        Set<UserCosmetic> finalCosmeticList = cosmeticList;
         InventoryProvider provider = new InventoryProvider() {
             @Override
             public void init(Player player, InventoryContents contents) {
                 contents.fillBorders(ClickableItem.empty(ConfigurationLoader.GUI_CONFIG.getBackpackFillerItem()));
-                for (Cosmetic cosmetic : finalCosmeticList) {
-                    contents.add(ClickableItem.of(cosmetic.getItemStack(),e->{
+                for (UserCosmetic cosmetic : finalCosmeticList) {
+                    contents.add(ClickableItem.of(cosmetic.getCosmetic().getItemStack(),e->{
                         data.equip(cosmetic);
                         player.closeInventory();
                     }));

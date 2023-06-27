@@ -25,15 +25,22 @@ public class ConfigurationLoader {
 
     public static void init() {
         var instance = LevityCosmetics.getInstance();
-        CHAT_COLOR_CONFIG = ConfigAPI.init(ChatColorConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
-        TITLE_CONFIG = ConfigAPI.init(TitleConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
-        GUI_CONFIG = ConfigAPI.init(GUIConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, instance);
-        CROWN_CONFIG = ConfigAPI.init(CrownConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
-        GLOW_CONFIG = ConfigAPI.init(GlowConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
-        TAB_COLOR_CONFIG = ConfigAPI.init(TabColorConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
-        CRATE_CONFIG = ConfigAPI.init(CrateConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
-        NICKNAME_PAINT_CONFIG = ConfigAPI.init(NicknamePaintConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
-        HAT_CONFIG = ConfigAPI.init(HatConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
+        try {
+            CHAT_COLOR_CONFIG = ConfigAPI.init(ChatColorConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
+            TITLE_CONFIG = ConfigAPI.init(TitleConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
+            GUI_CONFIG = ConfigAPI.init(GUIConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, instance);
+            CROWN_CONFIG = ConfigAPI.init(CrownConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
+            GLOW_CONFIG = ConfigAPI.init(GlowConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
+            TAB_COLOR_CONFIG = ConfigAPI.init(TabColorConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
+            CRATE_CONFIG = ConfigAPI.init(CrateConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
+            NICKNAME_PAINT_CONFIG = ConfigAPI.init(NicknamePaintConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
+            HAT_CONFIG = ConfigAPI.init(HatConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
+        }catch (Exception e) {
+            LevityCosmetics.getInstance().getLogger().severe("--START ERROR -- Failed to load cosmetics config files! Disabling plugin.");
+            e.printStackTrace();
+            LevityCosmetics.getInstance().getLogger().severe("--END ERROR -- Failed to load cosmetics config files! Disabling plugin.");
+            instance.getServer().getPluginManager().disablePlugin(instance);
+        }
     }
 
 }

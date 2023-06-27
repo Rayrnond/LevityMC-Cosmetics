@@ -1,12 +1,14 @@
 package com.reflexian.levitycosmetics.commands.admin.drop;
 
 import com.reflexian.levitycosmetics.commands.admin.drop.helpers.DropEvent;
+import com.reflexian.levitycosmetics.data.inventories.DropInventory;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
 import com.reflexian.levitycosmetics.data.objects.crates.CosmeticCrate;
 import com.reflexian.rapi.api.annotation.CommandInfo;
 import com.reflexian.rapi.api.command.Command;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 @CommandInfo(name = "drop")
 public class DropParentCommand extends Command {
@@ -15,6 +17,16 @@ public class DropParentCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
+
+
+        if (args.length == 0) {
+            if (EVENT == null) {
+                sender.sendMessage("§cThere is no drop event running!");
+            } else {
+                DropInventory.INVENTORY.open((Player) sender);
+            }
+            return true;
+        }
 
         if (!sender.hasPermission("levitycosmetics.admin.drop")) {
             sender.sendMessage("§cYou do not have permission to use this command!");

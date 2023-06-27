@@ -37,11 +37,8 @@ public class CosmeticGiveSub implements SubCommand {
             sender.sendMessage("§cThe target cosmetic was not found.");
             return;
         }
+
         UserData userData = UserDataService.shared.retrieveUserFromCache(target.getUniqueId());
-        if (userData.getAllCosmetics().contains(cosmetic)) {
-            sender.sendMessage("§cThe target player already has this cosmetic.");
-            return;
-        }
         cosmetic.giveToUser(userData);
         UserDataService.shared.save(userData, e->{});
         sender.sendMessage("§aSuccessfully gave " + cosmetic.getName() + " to " + target.getName() + ".");

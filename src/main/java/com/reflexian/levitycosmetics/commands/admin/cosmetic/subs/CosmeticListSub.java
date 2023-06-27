@@ -2,6 +2,7 @@ package com.reflexian.levitycosmetics.commands.admin.cosmetic.subs;
 
 import com.reflexian.levitycosmetics.commands.admin.cosmetic.CosmeticParentCommand;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
+import com.reflexian.levitycosmetics.data.objects.user.UserCosmetic;
 import com.reflexian.levitycosmetics.data.objects.user.UserData;
 import com.reflexian.levitycosmetics.data.objects.user.UserDataService;
 import com.reflexian.rapi.api.annotation.SubCommandInfo;
@@ -36,7 +37,7 @@ public class CosmeticListSub implements SubCommand {
         }
         sender.sendMessage("§b"+target.getName()+"§b's Cosmetics:");
         UserData userData = UserDataService.shared.retrieveUserFromCache(target.getUniqueId());
-        Set<Cosmetic> cosmeticList = userData.getAllCosmetics();
-        sender.sendMessage(cosmeticList.stream().map(Cosmetic::getName).collect(Collectors.joining(", ")));
+        Set<UserCosmetic> cosmeticList = userData.getUserCosmetics();
+        sender.sendMessage(cosmeticList.stream().map(c->c.getCosmetic().getName()).collect(Collectors.joining(", ")));
     }
 }

@@ -17,12 +17,19 @@ public class LGlowSerializer extends Serializer<LGlow> {
     @Override
     public LGlow deserialize(String s, BukkitConfiguration bukkitConfiguration) {
 
-        LGlow glow = new LGlow(
-                bukkitConfiguration.getString(s + ".name"),
-                bukkitConfiguration.getString(s + ".color"),
-                new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
-        );
-        Cosmetic.addCosmetic(glow);
-        return glow;
+        try {
+            LGlow glow = new LGlow(
+                    bukkitConfiguration.getString(s + ".name"),
+                    bukkitConfiguration.getString(s + ".color"),
+                    new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
+            );
+            Cosmetic.addCosmetic(glow);
+            return glow;
+        }catch (Exception e) {
+            System.out.println("Failed to load glow cosmetic: " + s);
+            e.printStackTrace();
+            return null;
+        }
+
     }
 }

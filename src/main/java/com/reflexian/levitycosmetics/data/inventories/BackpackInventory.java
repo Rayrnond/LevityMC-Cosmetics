@@ -4,16 +4,14 @@ import com.reflexian.levitycosmetics.LevityCosmetics;
 import com.reflexian.levitycosmetics.data.Database;
 import com.reflexian.levitycosmetics.data.configs.ConfigurationLoader;
 import com.reflexian.levitycosmetics.data.configs.GUIConfig;
-import com.reflexian.levitycosmetics.data.objects.cosmetics.chatcolors.LChatColor;
-import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LHat;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.CosmeticType;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.nickname.AssignedNickname;
-import com.reflexian.levitycosmetics.data.objects.cosmetics.nickname.LNicknamePaint;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.AssignedTitle;
-import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitle;
-import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitlePaint;
+import com.reflexian.levitycosmetics.data.objects.user.UserCosmetic;
 import com.reflexian.levitycosmetics.data.objects.user.UserData;
 import com.reflexian.levitycosmetics.data.objects.user.UserDataService;
+import com.reflexian.levitycosmetics.listeners.CosmeticListener;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.GradientUtils;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.InvUtils;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.ItemBuilder;
@@ -21,6 +19,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -29,6 +28,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.reflexian.levitycosmetics.listeners.CosmeticListener.lastChat;
 
 public class BackpackInventory implements InventoryProvider {
     public static final SmartInventory INVENTORY = SmartInventory.builder()
@@ -50,10 +51,8 @@ public class BackpackInventory implements InventoryProvider {
     private void showInventory(Player player, InventoryContents contents, int page, final int filtered) {
 
         final UserData userData = UserDataService.shared.retrieveUserFromCache(player.getUniqueId());
-        var cosmetics = UserDataService.shared.retrieveUserFromCache(player.getUniqueId()).getAllCosmetics();
-        cosmetics.addAll(userData.getAssignedNicknames());
-        cosmetics.addAll(userData.getAssignedTitles());
-        cosmetics.removeIf(e->e instanceof LTitle);
+        Set<UserCosmetic> cosmetics = UserDataService.shared.retrieveUserFromCache(player.getUniqueId()).getUserCosmetics();
+        cosmetics.removeIf(e->e.getCosmeticType() == CosmeticType.TITLE || e.getCosmeticType() == CosmeticType.HAT); // removing titles because they should be assignedtitles
 
         contents.fill(ClickableItem.empty(new ItemStack(Material.AIR)));
         GUIConfig guiConfig = ConfigurationLoader.GUI_CONFIG;
@@ -77,14 +76,14 @@ public class BackpackInventory implements InventoryProvider {
 
 
         switch (filtered) {
-            case 1 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic instanceof LHat).collect(Collectors.toSet());
-            case 2 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic instanceof LChatColor).collect(Collectors.toSet());
-            case 3 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic instanceof AssignedNickname).collect(Collectors.toSet());
-            case 4 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic instanceof AssignedTitle).collect(Collectors.toSet());
+            case 1 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic.getCosmeticType() == CosmeticType.HAT).collect(Collectors.toSet());
+            case 2 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic.getCosmeticType() == CosmeticType.CHAT_COLOR).collect(Collectors.toSet());
+            case 3 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic.getCosmeticType() == CosmeticType.ASSIGNED_NICKNAME).collect(Collectors.toSet());
+            case 4 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic.getCosmeticType() == CosmeticType.ASSIGNED_TITLE).collect(Collectors.toSet());
             default -> {}
         }
 
-        cosmetics = cosmetics.stream().sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName())).collect(Collectors.toCollection(LinkedHashSet::new));
+        cosmetics = cosmetics.stream().sorted((o1, o2) -> o1.getCosmetic().getName().compareToIgnoreCase(o2.getCosmetic().getName())).collect(Collectors.toCollection(LinkedHashSet::new));
         cosmetics = cosmetics.stream().skip(page * 21L).limit(21).collect(Collectors.toCollection(LinkedHashSet::new));
 
         int slot = 10;
@@ -92,19 +91,38 @@ public class BackpackInventory implements InventoryProvider {
             if (slot == 17 || slot == 18) slot = 19;
             else if (slot == 26 || slot == 27) slot = 28;
 
-            ItemStack itemStack = cosmetic.getItemStack().clone();
-            if (userData.getDatabaseSelectedIds().contains(cosmetic.getName())) {
+            ItemStack itemStack = cosmetic.getCosmetic().getItemStack().clone();
+            if (cosmetic.isSelected()) {
                 ItemBuilder.addLore(itemStack, " ", LevityCosmetics.getInstance().getMessagesConfig().getBackpackItemSelectedMessage());
             }
 
             contents.set(InvUtils.getPos(slot), ClickableItem.of(itemStack, e -> {
 
-                if (cosmetic instanceof LTitlePaint || cosmetic instanceof LNicknamePaint) {
+                if (cosmetic.getCosmeticType() == CosmeticType.ASSIGNED_NICKNAME) {
+                    if (((AssignedNickname) cosmetic.getCosmetic()).getContent().isEmpty()) {
+                        String message = GradientUtils.colorize(LevityCosmetics.getInstance().getMessagesConfig().getNicknameTitleMessage());
+
+                        player.closeInventory();
+                        player.sendTitle(" ", message, 0, 100, 0);
+                        player.sendMessage("\n \n \n"+message);
+                        lastChat.put(player.getUniqueId(), System.currentTimeMillis()+30000);
+                        CosmeticListener.chatToNickMap.put(player.getUniqueId(), (AssignedNickname) cosmetic.getCosmetic());
+                        return;
+                    }
+                }
+
+                if (cosmetic.getCosmeticType() == CosmeticType.TITLE_PAINT || cosmetic.getCosmeticType() == CosmeticType.NICKNAME_PAINT) {
                     showSelectMenu(player, cosmetic);
                     return;
                 }
+                if (cosmetic.isSelected()) {
+                    userData.unequip(cosmetic.getCosmetic());
+                    cosmetic.setSelected(false);
+                } else {
+                    userData.equip(cosmetic);
+                    cosmetic.setSelected(true);
+                }
 
-                userData.equip(cosmetic);
             }));
 
             slot++;
@@ -171,19 +189,17 @@ public class BackpackInventory implements InventoryProvider {
         return filterItem.build();
     }
 
-    private void showSelectMenu(Player player, Cosmetic cosmetic) {
+    private void showSelectMenu(Player player, UserCosmetic cosmetic) {
         UserData data = UserDataService.shared.retrieveUserFromCache(player.getUniqueId());
 
         final Set<Cosmetic> cosmeticList;
-        final boolean titlepaints = cosmetic instanceof LTitlePaint;
-        if (cosmetic instanceof LTitlePaint) {
+        final boolean titlepaints = cosmetic.getCosmeticType() == CosmeticType.TITLE_PAINT;
+        if (titlepaints) {
             cosmeticList = new HashSet<>(new HashSet<>(data.getAssignedTitles()));
-        } else if (cosmetic instanceof LNicknamePaint) {
-            cosmeticList = new HashSet<>(new HashSet<>(data.getAssignedNicknames()));
         } else {
-            return;
+            cosmeticList = new HashSet<>(new HashSet<>(data.getAssignedNicknames()));
+            cosmeticList.removeIf(c->((AssignedNickname)c).getContent().isEmpty());
         }
-
 
         InventoryProvider provider = new InventoryProvider() {
             @Override
@@ -196,17 +212,17 @@ public class BackpackInventory implements InventoryProvider {
                             try {
                                 if (titlepaints) {
                                     AssignedTitle title = (AssignedTitle) c;
-                                    title.setPaint(cosmetic.asTitlePaint());
+                                    title.setPaint(cosmetic.getCosmetic().asTitlePaint());
                                     Database.shared.save(title);
-                                    player.sendMessage("§aYou have set the title paint §e" + cosmetic.getName() + "§a for the title §e" + title.getTitle().getName() + "§a.");
+                                    player.sendMessage("§aYou have set the title paint §e" + cosmetic.getCosmetic().getName() + "§a for the title §e" + title.getTitle().getName() + "§a.");
                                 } else {
                                     AssignedNickname nickname = (AssignedNickname) c;
-                                    nickname.setPaint(cosmetic.asNicknamePaint());
+                                    nickname.setPaint(cosmetic.getCosmetic().asNicknamePaint());
                                     Database.shared.save(nickname);
-                                    player.sendMessage("§aYou have set the nickname paint §e" + cosmetic.getName() + "§a for the nickname §e" + nickname.getContent() + "§a.");
+                                    player.sendMessage("§aYou have set the nickname paint §e" + cosmetic.getCosmetic().getName() + "§a for the nickname §e" + nickname.getContent() + "§a.");
                                 }
 
-                                cosmetic.removeFromUser(data);
+                                data.getUserCosmetics().remove(cosmetic);
                                 UserDataService.shared.save(data,f->{});
                                 player.closeInventory();
                             }catch (Exception ef) {

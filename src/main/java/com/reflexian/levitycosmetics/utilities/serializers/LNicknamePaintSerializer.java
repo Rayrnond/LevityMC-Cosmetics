@@ -17,12 +17,19 @@ public class LNicknamePaintSerializer extends Serializer<LNicknamePaint> {
     @Override
     public LNicknamePaint deserialize(String s, BukkitConfiguration bukkitConfiguration) {
 
-        LNicknamePaint paint = new LNicknamePaint(
-                bukkitConfiguration.getString(s + ".name"),
-                bukkitConfiguration.getString(s + ".color"),
-                new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
-        );
-        Cosmetic.addCosmetic(paint);
-        return paint;
+        try {
+            LNicknamePaint paint = new LNicknamePaint(
+                    bukkitConfiguration.getString(s + ".name"),
+                    bukkitConfiguration.getString(s + ".color"),
+                    new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
+            );
+            Cosmetic.addCosmetic(paint);
+            return paint;
+        }catch (Exception e) {
+            System.out.println("Failed to load hat cosmetic: " + s);
+            e.printStackTrace();
+            return null;
+        }
+
     }
 }

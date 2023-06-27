@@ -16,13 +16,19 @@ public class LChatColorSerializer extends Serializer<LChatColor> {
 
     @Override
     public LChatColor deserialize(String s, BukkitConfiguration bukkitConfiguration) {
+        try {
+            LChatColor chatColor = new LChatColor(
+                    bukkitConfiguration.getString(s + ".name"),
+                    bukkitConfiguration.getString(s + ".color"),
+                    new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
+            );
+            Cosmetic.addCosmetic(chatColor);
+            return chatColor;
+        }catch (Exception e) {
+            System.out.println("Failed to load chat color cosmetic: " + s);
+            e.printStackTrace();
+            return null;
+        }
 
-        LChatColor chatColor = new LChatColor(
-                bukkitConfiguration.getString(s + ".name"),
-                bukkitConfiguration.getString(s + ".color"),
-                new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
-        );
-        Cosmetic.addCosmetic(chatColor);
-        return chatColor;
     }
 }

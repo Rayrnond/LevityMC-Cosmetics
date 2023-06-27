@@ -33,18 +33,14 @@ public class JoinListener implements Listener {
     @SneakyThrows
     @EventHandler
     public void onActualJoin(PlayerJoinEvent event) {
-        for (UserData value : UserDataService.shared.getCachedUserData().values()) {
 
-            if (value.getUuid() == event.getPlayer().getUniqueId()) {
-                if (value.getGlow() != null) {
-                    value.getGlow().setPlayer(event.getPlayer());
-                    value.getGlow().apply();
-                }
-            }
-
-//            if (value.getSelectedGlow() != null) {
-//                value.getGlow().display(event.getPlayer());
-//            }
+        UserData userData = UserDataService.shared.retrieveUserFromCache(event.getPlayer().getUniqueId());
+        if (userData.getGlow() != null) {
+            userData.getGlow().setPlayer(event.getPlayer());
+            userData.getGlow().apply();
+        }
+        if (userData.getSelectedHat() != null) {
+            userData.getSelectedHat().equipHat(event.getPlayer());
         }
     }
 

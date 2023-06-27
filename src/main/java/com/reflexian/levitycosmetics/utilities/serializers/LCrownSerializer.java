@@ -17,12 +17,19 @@ public class LCrownSerializer extends Serializer<LCrown> {
     @Override
     public LCrown deserialize(String s, BukkitConfiguration bukkitConfiguration) {
 
-        LCrown crown = new LCrown(
-                bukkitConfiguration.getString(s + ".name"),
-                bukkitConfiguration.getString(s + ".symbol"),
-                new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
-        );
-        Cosmetic.addCosmetic(crown);
-        return crown;
+        try {
+            LCrown crown = new LCrown(
+                    bukkitConfiguration.getString(s + ".name"),
+                    bukkitConfiguration.getString(s + ".symbol"),
+                    new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
+            );
+            Cosmetic.addCosmetic(crown);
+            return crown;
+        }catch (Exception e) {
+            System.out.println("Failed to load hat cosmetic: " + s);
+            e.printStackTrace();
+            return null;
+        }
+
     }
 }

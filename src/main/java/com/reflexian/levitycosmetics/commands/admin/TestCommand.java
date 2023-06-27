@@ -15,7 +15,7 @@ public class TestCommand extends Command {
         Player player = (Player) sender;
         final UserData userData = UserDataService.shared.retrieveUserFromCache(player.getUniqueId());
         for (Cosmetic a : Cosmetic.getAllCosmetics()) {
-            if (userData.getAllCosmetics().contains(a)) continue;
+//            if (userData.getAllCosmetics().contains(a)) continue;
             a.giveToUser(userData);
         }
         player.sendMessage("§aYou now have all cosmetics! Keep in mind these are placeholders and can be added to in configs.");

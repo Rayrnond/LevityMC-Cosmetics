@@ -19,13 +19,20 @@ public class LCosmeticCrateSerializer extends Serializer<CosmeticCrate> {
     @Override
     public CosmeticCrate deserialize(String s, BukkitConfiguration bukkitConfiguration) {
 
+        try {
+            CosmeticCrate crate = new CosmeticCrate(
+                    bukkitConfiguration.getString(s + ".name"),
+                    new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration),
+                    Serializers.of(List.class).deserialize(s + ".cosmetics", bukkitConfiguration)
+            );
+            CosmeticCrate.CRATES.put(crate.getName(), crate);
+            return crate;
+        }catch (Exception e) {
+            System.out.println("Failed to load crate cosmetic: " + s);
+            e.printStackTrace();
+            return null;
+        }
 
-        CosmeticCrate crate = new CosmeticCrate(
-                bukkitConfiguration.getString(s + ".name"),
-                new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration),
-                Serializers.of(List.class).deserialize(s + ".cosmetics", bukkitConfiguration)
-        );
-        CosmeticCrate.CRATES.put(crate.getName(), crate);
-        return crate;
+
     }
 }

@@ -70,18 +70,22 @@ public class LevityPlaceholders extends PlaceholderExpansion {
                     return "";
                 }
             }
+            case "nickname" -> {
+                beforeFormatted = getFormattedName(player, userData, true);
+                beforeFormatted = GradientUtils.colorize(beforeFormatted);
+            }
         }
         if (beforeFormatted.length() != 0 && params.endsWith("_spaced")) beforeFormatted = beforeFormatted + " ";
-        beforeFormatted = beforeFormatted.replace("%player%", getFormattedName(player, userData));
+        beforeFormatted = beforeFormatted.replace("%player%", getFormattedName(player, userData, false));
         return beforeFormatted;
     }
 
-    private String getFormattedName(Player player, UserData userData) {
+    private String getFormattedName(Player player, UserData userData, boolean withNick) {
         String username;
-        if (userData.getSelectedNickname() != null) {
+        if (userData.getSelectedNickname() != null && withNick) {
             username = userData.getSelectedNickname().getContent();
             if (userData.getSelectedNickname().getPaint() != null) {
-                username = userData.getSelectedNickname().getPaint().getColor().replace("%player%", username);
+                username = "~"+userData.getSelectedNickname().getPaint().getColor().replace("%player%", username);
             }
         } else {
             username = player.getName();
@@ -90,8 +94,8 @@ public class LevityPlaceholders extends PlaceholderExpansion {
     }
 
     private String getTabFormatted(Player player, UserData userData) {
-        String username = getFormattedName(player, userData);
-        if (userData.getSelectedTabColor() != null && (userData.getSelectedNickname() == null || userData.getSelectedNickname().getPaint() == null)) {
+        String username = getFormattedName(player, userData, false);
+        if (userData.getSelectedTabColor() != null) {
             username = userData.getSelectedTabColor().getColor().replace("%player%", username);
         }
         return username;

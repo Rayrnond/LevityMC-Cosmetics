@@ -15,6 +15,12 @@ public interface MessagesConfig extends Config {
         return "<color:green>You have selected the %cosmetic% <color:green>cosmetic!";
     }
 
+    @Comment("The message sent to the player when they unequip a cosmetic. Use %cosmetic% for the cosmetic name.")
+    @ConfigPath("backpack.unselected")
+    default String getBackpackUnselectMessage() {
+        return "<color:red>You have unequiped the %cosmetic% <color:red>cosmetic!";
+    }
+
     @Comment("The message shown under an item's lore if the cosmetic is selected.")
     @ConfigPath("backpack.item-selected")
     default String getBackpackItemSelectedMessage() {

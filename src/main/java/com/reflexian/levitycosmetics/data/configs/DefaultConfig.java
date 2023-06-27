@@ -54,15 +54,6 @@ public interface DefaultConfig extends Config {
         return 1000;
     }
 
-    @Comment("This is the item used for nickname tickets")
-    @ConfigPath("items.nickname.ticket")
-    default ItemStack getNicknameTicket() {
-        ItemBuilder itemBuilder = new ItemBuilder(Material.NAME_TAG);
-        itemBuilder.replaceAndSymbol(false);
-        itemBuilder.displayname("<color:red>Nickname Ticket");
-        itemBuilder.lore("<color:gray>Use this ticket redeem a custom name!","<color:gray>Right click to use!");
-        return itemBuilder.build();
-    }
 
     @Comment("This is the item shown in backpack")
     @ConfigPath("items.nickname.backpack")
