@@ -32,6 +32,10 @@ public class LHatSerializer extends Serializer<LHat> {
                     new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
             );
 
+            if (bukkitConfiguration.contains(s + ".rarity")) {
+                hat.setRarity(bukkitConfiguration.getInt(s + ".rarity"));
+            }
+
             Cosmetic.addCosmetic(hat);
             return hat;
         }catch (Exception e) {

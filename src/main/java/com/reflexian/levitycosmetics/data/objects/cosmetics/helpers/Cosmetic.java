@@ -8,6 +8,7 @@ import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.AssignedHat;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LCrown;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LGlow;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LHat;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.joinmessage.LJoinMessage;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.nickname.AssignedNickname;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.nickname.LNicknamePaint;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.AssignedTitle;
@@ -15,6 +16,7 @@ import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitle;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitlePaint;
 import com.reflexian.levitycosmetics.data.objects.user.UserCosmetic;
 import com.reflexian.levitycosmetics.data.objects.user.UserData;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -45,6 +47,14 @@ public abstract class Cosmetic {
     public abstract ItemStack getItemStack();
     public abstract String getName();
     public abstract CosmeticType getType();
+
+
+    @Setter
+    private int rarity=1;
+
+    public int getRarity() {
+        return rarity;
+    }
 
     public void giveToUser(UserData userData) {
 
@@ -122,6 +132,7 @@ public abstract class Cosmetic {
     public LNicknamePaint asNicknamePaint() {
         return (LNicknamePaint) this;
     }
+    public LJoinMessage asJoinMessage() {return (LJoinMessage) this;}
 
     private boolean runProbability(int percent) {
         if (percent == 0) return false;

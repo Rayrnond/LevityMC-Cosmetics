@@ -22,10 +22,13 @@ public class LTitlePaintSerializer extends Serializer<LTitlePaint> {
                     bukkitConfiguration.getString(s + ".color"),
                     new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
             );
+            if (bukkitConfiguration.contains(s + ".rarity")) {
+                title.setRarity(bukkitConfiguration.getInt(s + ".rarity"));
+            }
             Cosmetic.addCosmetic(title);
             return title;
         }catch (Exception e) {
-            System.out.println("Failed to load hat cosmetic: " + s);
+            System.out.println("Failed to load title paint cosmetic: " + s);
             e.printStackTrace();
             return null;
         }

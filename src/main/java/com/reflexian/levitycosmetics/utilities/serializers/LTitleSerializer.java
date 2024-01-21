@@ -23,6 +23,9 @@ public class LTitleSerializer extends Serializer<LTitle> {
                     bukkitConfiguration.getString(s + ".tag"),
                     new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
             );
+            if (bukkitConfiguration.contains(s + ".rarity")) {
+                title.setRarity(bukkitConfiguration.getInt(s + ".rarity"));
+            }
             Cosmetic.addCosmetic(title);
             return title;
         }catch (Exception e) {

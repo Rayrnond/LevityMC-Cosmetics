@@ -8,10 +8,12 @@ import com.reflexian.levitycosmetics.data.objects.cosmetics.chatcolors.LTabColor
 import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LCrown;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LGlow;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LHat;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.joinmessage.LJoinMessage;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.nickname.LNicknamePaint;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitle;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.LTitlePaint;
 import com.reflexian.levitycosmetics.data.objects.crates.CosmeticCrate;
+import com.reflexian.levitycosmetics.listeners.ItemsAdderListener;
 import com.reflexian.levitycosmetics.utilities.serializers.*;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.LevityPlaceholders;
 import com.reflexian.rapi.RAPI;
@@ -55,6 +57,7 @@ public final class LevityCosmetics extends JavaPlugin {
         ConfigAPI.registerSerializer(LCrown.class, new LCrownSerializer());
         ConfigAPI.registerSerializer(LTabColor.class, new LTabColorSerializer());
         ConfigAPI.registerSerializer(LNicknamePaint.class, new LNicknamePaintSerializer());
+        ConfigAPI.registerSerializer(LJoinMessage.class, new LJoinMessageSerializer());
         ConfigAPI.registerSerializer(CosmeticCrate.class, new LCosmeticCrateSerializer());
         ConfigAPI.registerSerializer(LHat.class, new LHatSerializer());
 
@@ -72,6 +75,7 @@ public final class LevityCosmetics extends JavaPlugin {
         // async
         Bukkit.getScheduler().runTaskAsynchronously(this, Database.shared::initializeDataSource);
 
+        Bukkit.getScheduler().runTaskLater(this, ItemsAdderListener::onLoad, 20*5);
 
     }
 

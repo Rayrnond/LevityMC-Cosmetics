@@ -21,6 +21,7 @@ public class ConfigurationLoader {
     public static CrateConfig CRATE_CONFIG;
     public static NicknamePaintConfig NICKNAME_PAINT_CONFIG;
     public static HatConfig HAT_CONFIG;
+    public static JoinMessageConfig JOIN_MESSAGE_CONFIG;
 
 
     public static void init() {
@@ -35,6 +36,7 @@ public class ConfigurationLoader {
             CRATE_CONFIG = ConfigAPI.init(CrateConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
             NICKNAME_PAINT_CONFIG = ConfigAPI.init(NicknamePaintConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
             HAT_CONFIG = ConfigAPI.init(HatConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
+            JOIN_MESSAGE_CONFIG = ConfigAPI.init(JoinMessageConfig.class, NameStyle.UNDERSCORE, CommentStyle.ABOVE_CONTENT, false, new File(instance.getDataFolder()+"/cosmetics/"), instance);
         }catch (Exception e) {
             LevityCosmetics.getInstance().getLogger().severe("--START ERROR -- Failed to load cosmetics config files! Disabling plugin.");
             e.printStackTrace();

@@ -30,18 +30,26 @@ public class ItemStackSerializer extends Serializer<ItemStack> {
     @Override
     public ItemStack deserialize(String s, BukkitConfiguration bukkitConfiguration) {
 
+        if (bukkitConfiguration == null || !bukkitConfiguration.contains(s)) {
+            throw new NullPointerException("Does not exist in config: " + s);
+        }
         ItemBuilder builder = new ItemBuilder(Material.valueOf(bukkitConfiguration.getString(s + ".material").toUpperCase()));
 
 
         if (bukkitConfiguration.contains(s + ".itemsadderID")) {
             String id = bukkitConfiguration.getString(s + ".itemsadderID");
             if (id != null && !id.isEmpty()) {
-                CustomStack stack = CustomStack.getInstance(id);
-                if (stack == null) {
-                    throw new RuntimeException("Failed to serialize item with ID: " + s + ". Could not find ItemsAdder item with id " + id);
-                }
+                try {
+                    CustomStack stack = CustomStack.getInstance(id);
 
-                builder = new ItemBuilder(stack.getItemStack());
+                    if (stack == null) {
+                        throw new RuntimeException("Failed to serialize item with ID: " + s + ". Could not find ItemsAdder item with id " + id);
+                    }
+
+                    builder = new ItemBuilder(stack.getItemStack());
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 

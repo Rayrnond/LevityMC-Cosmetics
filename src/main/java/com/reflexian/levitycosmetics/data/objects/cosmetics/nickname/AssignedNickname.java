@@ -1,6 +1,6 @@
 package com.reflexian.levitycosmetics.data.objects.cosmetics.nickname;
 
-import com.reflexian.levitycosmetics.LevityCosmetics;
+import com.reflexian.levitycosmetics.data.configs.ConfigurationLoader;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.CosmeticType;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.GradientUtils;
@@ -34,19 +34,24 @@ public class AssignedNickname extends Cosmetic{
     }
 
     public AssignedNickname(UUID uuid, String cosmeticId, String content, @Nullable LNicknamePaint paint) {
+        
         this.uuid = uuid;
         this.cosmeticId = cosmeticId;
         this.content = content;
-        this.paint = paint;
         if (paint != null) {
+            this.paint = paint;
             this.paintId = paint.getName();
         }
     }
 
     public static AssignedNickname fromResultSet(ResultSet resultSet) throws SQLException {
 
-        final Cosmetic paint = Cosmetic.getCosmetic(resultSet.getString("paintId"));
+        if (resultSet.getString("cosmeticId") == null) throw new RuntimeException("Failed to load nickname cosmetic: " + resultSet.getString("cosmeticId")+ ". No cosmetic Id");
+        else if (resultSet.getString("content") == null) throw new RuntimeException("Failed to load nickname cosmetic: " + resultSet.getString("cosmeticId")+ ". No content " + resultSet.getString("content"));
+        else if (resultSet.getString("paintId") == null) throw new RuntimeException("Failed to load nickname cosmetic: " + resultSet.getString("cosmeticId")+ ". No paint Id " + resultSet.getString("paintId"));
 
+        final Cosmetic paint = Cosmetic.getCosmetic(resultSet.getString("paintId"));
+//        if (paint == null) throw new RuntimeException("Failed to load nickname cosmetic: " + resultSet.getString("cosmeticId")+ ". PiD:"+resultSet.getString("paintId"));
         return new AssignedNickname(UUID.fromString(resultSet.getString("user_id")), resultSet.getString("cosmeticId"), resultSet.getString("content"), paint == null ? null : paint.asNicknamePaint());
     }
 
@@ -57,7 +62,7 @@ public class AssignedNickname extends Cosmetic{
 
     @Override
     public ItemStack getItemStack() {
-        ItemStack itemstack = LevityCosmetics.getInstance().getDefaultConfig().getNicknameCosmeticBackpackItem().clone();
+        ItemStack itemstack = ConfigurationLoader.GUI_CONFIG.getNicknameCosmeticBackpackItem().clone();
         ItemMeta meta = itemstack.getItemMeta();
 
         String name = content;
@@ -65,8 +70,11 @@ public class AssignedNickname extends Cosmetic{
             name = paint.getColor().replace("%player%", content);
             name = GradientUtils.colorize(name);
         }
+        final String finalName = name;
 
         meta.setDisplayName(meta.getDisplayName().replace("%nickname%", (content.isEmpty() ? "Click to set a nickname" : name)));
+        // get lore
+        meta.setLore(meta.getLore().stream().map(e->e.replace("%nickname%", (content.isEmpty() ? "": finalName))).toList());
         itemstack.setItemMeta(meta);
         return itemstack;
     }

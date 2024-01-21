@@ -9,6 +9,9 @@ dependencies:
   - name: ItemsAdder
     required: false
     bootstrap: false
+  - name: Vault
+    required: true
+    bootstrap: false
 authors: [Raymond, Whale]
 website: reflexian.com
 #loader: com.reflexian.levitycosmetics.CosmeticsPluginLoader

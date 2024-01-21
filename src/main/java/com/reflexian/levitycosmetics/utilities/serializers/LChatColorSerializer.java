@@ -22,6 +22,9 @@ public class LChatColorSerializer extends Serializer<LChatColor> {
                     bukkitConfiguration.getString(s + ".color"),
                     new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
             );
+            if (bukkitConfiguration.contains(s + ".rarity")) {
+                chatColor.setRarity(bukkitConfiguration.getInt(s + ".rarity"));
+            }
             Cosmetic.addCosmetic(chatColor);
             return chatColor;
         }catch (Exception e) {

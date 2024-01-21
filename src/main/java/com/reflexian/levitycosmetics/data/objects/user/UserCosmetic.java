@@ -24,6 +24,9 @@ public class UserCosmetic {
 
 
     public static UserCosmetic fromCosmetic(UUID uuid, Cosmetic cosmetic) {
+        if (cosmetic == null) {
+            throw new RuntimeException("Cosmetic is null. Uh oh!");
+        }
 
         if (cosmetic instanceof AssignedNickname || cosmetic instanceof AssignedTitle) {
             String id = (cosmetic instanceof AssignedNickname) ? ((AssignedNickname) cosmetic).getCosmeticId() : ((AssignedTitle) cosmetic).getCosmeticId();

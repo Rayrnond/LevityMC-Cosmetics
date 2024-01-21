@@ -74,6 +74,12 @@ public class LevityPlaceholders extends PlaceholderExpansion {
                 beforeFormatted = getFormattedName(player, userData, true);
                 beforeFormatted = GradientUtils.colorize(beforeFormatted);
             }
+            case "joinmessage" -> {
+                if (userData.getSelectedJoinMessage() != null) {
+                    beforeFormatted = userData.getSelectedJoinMessage().getMessage().replace("%player%", player.getName()).replace("%playerWithColor%", GradientUtils.colorize(getFormattedName(player, userData, true)));
+                    beforeFormatted = GradientUtils.colorize(beforeFormatted);
+                }
+            }
         }
         if (beforeFormatted.length() != 0 && params.endsWith("_spaced")) beforeFormatted = beforeFormatted + " ";
         beforeFormatted = beforeFormatted.replace("%player%", getFormattedName(player, userData, false));

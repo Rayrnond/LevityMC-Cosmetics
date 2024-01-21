@@ -1,5 +1,5 @@
 ## Levity Cosmetics
-Made for Purpur / Paper 1.19.4 by Rayrnond and Alex.dev.
+Made for Purpur / Paper 1.19.4 by Rayrnond
 
 ### Features
 - Backpack GUI
@@ -37,8 +37,6 @@ Color codes are managed by Minimessage. See documentation at [https://docs.advnt
 | `/drop [cosmeticName] [amount] [startingCost]` | Start a cosmetic, or crate drop. [cosmeticName] can be a crate. | `levitycosmetics.admin.drop`       |
 | `/crate list`                                  | List all crates                                                 | `levitycosmetics.admin.crate.list` |
 | `/crate get [crateName] [player]`              | Get a crate                                                     | `levitycosmetics.admin.crate.get`  |
-
-[//]: # (| `/tradeban [player]`                           | Toggle trade ban status &#40;not implemented, missing instruction&#41;  | `levitycosmetics.admin.tradeban`   |)
 
 ### Placeholders
 

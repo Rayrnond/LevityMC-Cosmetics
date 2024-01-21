@@ -23,6 +23,9 @@ public class LGlowSerializer extends Serializer<LGlow> {
                     bukkitConfiguration.getString(s + ".color"),
                     new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
             );
+            if (bukkitConfiguration.contains(s + ".rarity")) {
+                glow.setRarity(bukkitConfiguration.getInt(s + ".rarity"));
+            }
             Cosmetic.addCosmetic(glow);
             return glow;
         }catch (Exception e) {

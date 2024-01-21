@@ -15,7 +15,8 @@ public enum CosmeticType {
     TITLE(7),
     TITLE_PAINT(8),
     ASSIGNED_TITLE(9),
-    ASSIGNED_HAT(10);
+    ASSIGNED_HAT(10),
+    JOIN_MESSAGE(11);
 
 
     @Getter

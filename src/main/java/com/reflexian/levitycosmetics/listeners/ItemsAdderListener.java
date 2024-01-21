@@ -9,8 +9,18 @@ import org.bukkit.event.Listener;
 @Registrar
 public class ItemsAdderListener implements Listener {
 
+    private static boolean loaded = false;
+
     @EventHandler
     public void onItemsLoad(ItemsAdderLoadDataEvent event) {
+        if (loaded) return;
+        loaded = true;
+        ConfigurationLoader.init();
+    }
+
+    public static void onLoad() {
+        if (loaded) return;
+        loaded = true;
         ConfigurationLoader.init();
     }
 

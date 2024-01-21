@@ -31,8 +31,13 @@ public class AssignedTitle extends Cosmetic {
 
     public static AssignedTitle fromResultSet(ResultSet resultSet) throws SQLException {
 
+        if (resultSet.getString("cosmeticId") == null) throw new RuntimeException("Failed to load title cosmetic: " + resultSet.getString("cosmeticId")+ ". No cosmetic Id");
+        else if (resultSet.getString("titleId") == null) throw new RuntimeException("Failed to load title cosmetic: " + resultSet.getString("cosmeticId")+ ". No title Id " + resultSet.getString("titleId"));
+        else if (resultSet.getString("paintId") == null) throw new RuntimeException("Failed to load title cosmetic: " + resultSet.getString("cosmeticId")+ ". No paint Id " + resultSet.getString("paintId"));
+
         final Cosmetic t = Cosmetic.getCosmetic(resultSet.getString("titleId"));
         final Cosmetic p = Cosmetic.getCosmetic(resultSet.getString("paintId"));
+        if (t == null && p == null) throw new RuntimeException("Failed to load title cosmetic: " + resultSet.getString("cosmeticId")+ ". This is not a good thing, but don't spam raymond because you probably messed with the db :DDDDDDDDDDDDDDDD");
         return new AssignedTitle(UUID.fromString(resultSet.getString("user_id")), resultSet.getString("cosmeticId"), t == null ? null : t.asTitle(), p == null ? null : p.asTitlePaint());
     }
 

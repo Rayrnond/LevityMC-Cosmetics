@@ -45,6 +45,17 @@ public interface GUIConfig extends Config {
         return itemBuilder.build();
     }
 
+
+    @Comment("Shown in the backpack GUI as the close button")
+    @ConfigPath("gui.backpack.close-button")
+    default ItemStack getBackpackCloseButtonItem() {
+        ItemBuilder itemBuilder = new ItemBuilder(CustomStack.getInstance("_iainternal:icon_next_orange").getItemStack());
+        itemBuilder.replaceAndSymbol(false);
+        itemBuilder.displayname("<color:red>Close</gradient>");
+        itemBuilder.lore("<color:gray>Click to close this menu");
+        return itemBuilder.build();
+    }
+
     @Comment("The filter option shown in the backpack menu")
     @ConfigPath("gui.backpack.filter-button")
     default ItemStack getBackpackFilterItem() {
@@ -53,10 +64,13 @@ public interface GUIConfig extends Config {
         itemBuilder.displayname("<gradient:#F9C58D:#F492F0>Filter</gradient>");
         itemBuilder.lore(" ");
         itemBuilder.lore("%selection1% <color:gray>All Cosmetics");
-        itemBuilder.lore("%selection2% <color:gray>Hats");
-        itemBuilder.lore("%selection3% <color:gray>Chat Colors");
-        itemBuilder.lore("%selection4% <color:gray>Nicknames");
-        itemBuilder.lore("%selection5% <color:gray>Titles");
+//        itemBuilder.lore("%selection2% <color:gray>Hats");
+        itemBuilder.lore("%selection2% <color:gray>Chat Colors");
+        itemBuilder.lore("%selection3% <color:gray>Nicknames");
+        itemBuilder.lore("%selection4% <color:gray>Titles");
+        itemBuilder.lore("%selection5% <color:gray>Tab Color");
+        itemBuilder.lore("%selection6% <color:gray>Sorted by rarities");
+
         return itemBuilder.build();
     }
 
@@ -110,6 +124,11 @@ public interface GUIConfig extends Config {
         return 43;
     }
 
+    @ConfigPath("gui.backpack.close-button.slot")
+    default int getBackpackCloseButtonSlot() {
+        return 40;
+    }
+
 
 
     @ConfigPath("gui.backpack.error.slot")
@@ -144,5 +163,14 @@ public interface GUIConfig extends Config {
         return itemBuilder.build();
     }
 
+    @Comment("This is the item shown in backpack")
+    @ConfigPath("items.nickname.backpack")
+    default ItemStack getNicknameCosmeticBackpackItem() {
+        ItemBuilder itemBuilder = new ItemBuilder(Material.NAME_TAG);
+        itemBuilder.replaceAndSymbol(false);
+        itemBuilder.displayname("<color:red>Nickname: %nickname%");
+        itemBuilder.lore("<color:gray>Click to select this nickname!");
+        return itemBuilder.build();
+    }
 
 }

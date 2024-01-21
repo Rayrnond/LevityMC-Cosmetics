@@ -23,6 +23,9 @@ public class LTabColorSerializer extends Serializer<LTabColor> {
                     bukkitConfiguration.getString(s + ".color"),
                     new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
             );
+            if (bukkitConfiguration.contains(s + ".rarity")) {
+                tabColor.setRarity(bukkitConfiguration.getInt(s + ".rarity"));
+            }
             Cosmetic.addCosmetic(tabColor);
             return tabColor;
         }catch (Exception e) {

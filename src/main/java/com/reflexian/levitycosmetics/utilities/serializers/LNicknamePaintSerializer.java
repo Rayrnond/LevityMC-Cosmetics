@@ -23,10 +23,13 @@ public class LNicknamePaintSerializer extends Serializer<LNicknamePaint> {
                     bukkitConfiguration.getString(s + ".color"),
                     new ItemStackSerializer().deserialize(s + ".itemstack", bukkitConfiguration)
             );
+            if (bukkitConfiguration.contains(s + ".rarity")) {
+                paint.setRarity(bukkitConfiguration.getInt(s + ".rarity"));
+            }
             Cosmetic.addCosmetic(paint);
             return paint;
         }catch (Exception e) {
-            System.out.println("Failed to load hat cosmetic: " + s);
+            System.out.println("Failed to load nickname paint cosmetic: " + s);
             e.printStackTrace();
             return null;
         }

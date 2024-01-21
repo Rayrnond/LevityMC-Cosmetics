@@ -9,6 +9,7 @@ import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LCrown;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LGlow;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.hat.LHat;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.helpers.Cosmetic;
+import com.reflexian.levitycosmetics.data.objects.cosmetics.joinmessage.LJoinMessage;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.nickname.AssignedNickname;
 import com.reflexian.levitycosmetics.data.objects.cosmetics.titles.AssignedTitle;
 import com.reflexian.levitycosmetics.utilities.uncategorizied.Glow;
@@ -43,6 +44,7 @@ public class UserData implements Serializable {
     @Setter private transient LChatColor selectedChatColor=null;
     @Setter private transient LTabColor selectedTabColor = null;
     @Setter private transient LGlow selectedGlow=null;
+    @Setter private transient LJoinMessage selectedJoinMessage=null;
     @Setter private transient LCrown selectedCrown=null;
     @Setter private transient AssignedHat selectedHat=null;
     @Setter private transient AssignedTitle selectedTitle=null;
@@ -66,6 +68,7 @@ public class UserData implements Serializable {
         }
         selectedHat = null;
         selectedGlow = null;
+        selectedJoinMessage = null;
         selectedCrown = null;
         selectedTitle = null;
         selectedNickname = null;
@@ -96,6 +99,8 @@ public class UserData implements Serializable {
         try {
             if (cosmetic instanceof LChatColor)
                 setSelectedChatColor(cosmetic.asChatColor());
+            else if (cosmetic instanceof LJoinMessage)
+                setSelectedJoinMessage(cosmetic.asJoinMessage());
             else if (cosmetic instanceof LCrown)
                 setSelectedCrown(cosmetic.asCrown());
             else if (cosmetic instanceof LTabColor)
@@ -138,6 +143,8 @@ public class UserData implements Serializable {
                 setSelectedChatColor(null);
             else if (cosmetic instanceof LCrown)
                 setSelectedCrown(null);
+            else if (cosmetic instanceof LJoinMessage)
+                setSelectedJoinMessage(null);
             else if (cosmetic instanceof LTabColor)
                 setSelectedTabColor(null);
             else if (cosmetic instanceof LGlow) {
@@ -201,6 +208,8 @@ public class UserData implements Serializable {
                 userData.selectedTabColor = lTabColor;
             } else if (cosmetic instanceof LCrown lCrown) {
                 userData.selectedCrown = lCrown;
+            } else if (cosmetic instanceof LJoinMessage lJoinMessage) {
+                userData.selectedJoinMessage = lJoinMessage;
             }
         }
 

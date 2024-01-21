@@ -19,7 +19,6 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -52,15 +51,18 @@ public class BackpackInventory implements InventoryProvider {
 
         final UserData userData = UserDataService.shared.retrieveUserFromCache(player.getUniqueId());
         Set<UserCosmetic> cosmetics = UserDataService.shared.retrieveUserFromCache(player.getUniqueId()).getUserCosmetics();
-        cosmetics.removeIf(e->e.getCosmeticType() == CosmeticType.TITLE || e.getCosmeticType() == CosmeticType.HAT); // removing titles because they should be assignedtitles
+        cosmetics.removeIf(e-> e.getCosmetic() == null || e.getCosmeticType() == CosmeticType.TITLE || e.getCosmeticType() == CosmeticType.HAT); // removing titles because they should be assignedtitles
 
         contents.fill(ClickableItem.empty(new ItemStack(Material.AIR)));
         GUIConfig guiConfig = ConfigurationLoader.GUI_CONFIG;
         contents.fillBorders(ClickableItem.empty(guiConfig.getBackpackFillerItem()));
 
+        contents.set(InvUtils.getPos(guiConfig.getBackpackCloseButtonSlot()), ClickableItem.of(guiConfig.getBackpackCloseButtonItem(), e->{
+            player.closeInventory();
+        }));
 
         contents.set(InvUtils.getPos(guiConfig.getBackpackFilterSlot()), ClickableItem.of(getFilter(filtered), e->{
-            showInventory(player, contents, 0, filtered > 3 ? 0 : filtered+1);
+            showInventory(player, contents, 0, filtered > 4 ? 0 : filtered+1);
         }));
 
         contents.set(InvUtils.getPos(guiConfig.getBackpackResetSlot()), ClickableItem.of(guiConfig.getBackpackResetItem(), e->{
@@ -76,15 +78,21 @@ public class BackpackInventory implements InventoryProvider {
 
 
         switch (filtered) {
-            case 1 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic.getCosmeticType() == CosmeticType.HAT).collect(Collectors.toSet());
-            case 2 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic.getCosmeticType() == CosmeticType.CHAT_COLOR).collect(Collectors.toSet());
-            case 3 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic.getCosmeticType() == CosmeticType.ASSIGNED_NICKNAME).collect(Collectors.toSet());
-            case 4 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic.getCosmeticType() == CosmeticType.ASSIGNED_TITLE).collect(Collectors.toSet());
+//            case 1 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic.getCosmeticType() == CosmeticType.ASSIGNED_HAT).collect(Collectors.toSet());
+            case 1 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic.getCosmeticType() == CosmeticType.CHAT_COLOR).collect(Collectors.toSet());
+            case 2 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic.getCosmeticType() == CosmeticType.ASSIGNED_NICKNAME || cosmetic.getCosmeticType().equals(CosmeticType.NICKNAME_PAINT)).collect(Collectors.toSet());
+            case 3 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic.getCosmeticType() == CosmeticType.ASSIGNED_TITLE || cosmetic.getCosmeticType().equals(CosmeticType.TITLE_PAINT) || cosmetic.getCosmeticType().equals(CosmeticType.TITLE)).collect(Collectors.toSet());
+            case 4 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic.getCosmeticType() == CosmeticType.TAB_COLOR).collect(Collectors.toSet());
+            case 5 -> cosmetics = cosmetics.stream().filter(cosmetic -> cosmetic.getCosmeticType() == CosmeticType.CROWN).collect(Collectors.toSet());
             default -> {}
         }
 
-        cosmetics = cosmetics.stream().sorted((o1, o2) -> o1.getCosmetic().getName().compareToIgnoreCase(o2.getCosmetic().getName())).collect(Collectors.toCollection(LinkedHashSet::new));
+        cosmetics = cosmetics.stream()
+                .sorted((o1, o2) -> o1.getCosmetic().getName().compareToIgnoreCase(o2.getCosmetic().getName()))
+                .sorted((o1, o2) -> Integer.compare(o2.getCosmetic().getRarity(), o1.getCosmetic().getRarity()))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         cosmetics = cosmetics.stream().skip(page * 21L).limit(21).collect(Collectors.toCollection(LinkedHashSet::new));
+
 
         int slot = 10;
         for (var cosmetic : cosmetics) {
@@ -183,6 +191,7 @@ public class BackpackInventory implements InventoryProvider {
                 l=l.replace("%selection3%", filtered==2 ? selected : notSelected);
                 l=l.replace("%selection4%", filtered==3 ? selected : notSelected);
                 l=l.replace("%selection5%", filtered==4 ? selected : notSelected);
+                l=l.replace("%selection6%", filtered==5 ? selected : notSelected);
                 filterItem.lore(l);
             }
         }

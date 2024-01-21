@@ -55,14 +55,5 @@ public interface DefaultConfig extends Config {
     }
 
 
-    @Comment("This is the item shown in backpack")
-    @ConfigPath("items.nickname.backpack")
-    default ItemStack getNicknameCosmeticBackpackItem() {
-        ItemBuilder itemBuilder = new ItemBuilder(Material.NAME_TAG);
-        itemBuilder.replaceAndSymbol(false);
-        itemBuilder.displayname("<color:red>Nickname: %nickname%");
-        itemBuilder.lore("<color:gray>Click to select this nickname!");
-        return itemBuilder.build();
-    }
 
 }
