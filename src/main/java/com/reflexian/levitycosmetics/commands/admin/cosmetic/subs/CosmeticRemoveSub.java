@@ -47,7 +47,7 @@ public class CosmeticRemoveSub implements SubCommand {
         userData.getUserCosmetics().stream().filter(e->e.getCosmetic() == cosmetic).findFirst().ifPresent(e->{
             userData.getUserCosmetics().remove(e);
             userData.unequip(e.getCosmetic());
-        });\
+        });
         UserDataService.shared.save(userData, e->{});
         sender.sendMessage("§aSuccessfully removed " + cosmetic.getName() + " from " + target.getName() + ".");
     }
